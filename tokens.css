@@ -1,0 +1,91 @@
+/* ── Satoshi font faces ── */
+@font-face { font-family: 'Satoshi'; src: url('./Satoshi/Satoshi-Light.otf') format('opentype'); font-weight: 300; font-style: normal; font-display: swap; }
+@font-face { font-family: 'Satoshi'; src: url('./Satoshi/Satoshi-LightItalic.otf') format('opentype'); font-weight: 300; font-style: italic; font-display: swap; }
+@font-face { font-family: 'Satoshi'; src: url('./Satoshi/Satoshi-Regular.otf') format('opentype'); font-weight: 400; font-style: normal; font-display: swap; }
+@font-face { font-family: 'Satoshi'; src: url('./Satoshi/Satoshi-Italic.otf') format('opentype'); font-weight: 400; font-style: italic; font-display: swap; }
+@font-face { font-family: 'Satoshi'; src: url('./Satoshi/Satoshi-Medium.otf') format('opentype'); font-weight: 500; font-style: normal; font-display: swap; }
+@font-face { font-family: 'Satoshi'; src: url('./Satoshi/Satoshi-MediumItalic.otf') format('opentype'); font-weight: 500; font-style: italic; font-display: swap; }
+@font-face { font-family: 'Satoshi'; src: url('./Satoshi/Satoshi-Bold.otf') format('opentype'); font-weight: 700; font-style: normal; font-display: swap; }
+@font-face { font-family: 'Satoshi'; src: url('./Satoshi/Satoshi-BoldItalic.otf') format('opentype'); font-weight: 700; font-style: italic; font-display: swap; }
+@font-face { font-family: 'Satoshi'; src: url('./Satoshi/Satoshi-Black.otf') format('opentype'); font-weight: 900; font-style: normal; font-display: swap; }
+@font-face { font-family: 'Satoshi'; src: url('./Satoshi/Satoshi-BlackItalic.otf') format('opentype'); font-weight: 900; font-style: italic; font-display: swap; }
+
+/* ============================================================
+   Design Tokens — extracted from Figma frame 151:7964
+   FMO User Journey · Bell Canada
+   ============================================================ */
+
+:root {
+  /* ── Brand blues ── */
+  --color-brand:          #00549A;
+  --color-brand-dark:     #003778;
+  --color-brand-medium:   #0064BB;
+  --color-brand-hover:    #0070CE;
+  --color-brand-light:    #2B6CCB;
+  --color-brand-tint:     #D3E3ED;
+  --color-brand-tint-40:  rgba(0, 100, 187, 0.40);
+
+  /* ── Neutrals ── */
+  --color-ink:            #1B2332;
+  --color-text-primary:   #111111;
+  --color-text-secondary: rgba(17, 17, 17, 0.60);
+  --color-text-muted:     #555555;
+  --color-white:          #FFFFFF;
+
+  /* ── Backgrounds ── */
+  --color-bg-white:       #FFFFFF;
+  --color-bg-subtle:      #F4F5F7;
+  --color-bg-warm:        #F9F8F6;
+  --color-bg-light:       #F4F4F4;
+  --color-bg-dark:        #1B2332;
+
+  /* ── Borders ── */
+  --color-border:         #D9D9D9;
+  --color-border-medium:  #BDBDBD;
+  --color-border-light:   #D4D4D4;
+  --color-border-dark:    rgba(17, 17, 17, 0.16);
+
+  /* ── Status ── */
+  --color-status-amber:   #FFB200;
+  --color-status-red:     #D32F2F;
+  --color-status-green:   #2E7D32;
+  --color-status-grey:    #757575;
+
+  /* ── Radii ── */
+  --radius-xs:   2px;
+  --radius-sm:   4px;
+  --radius-md:   12px;
+
+  /* ── Spacing ── */
+  --space-1:   4px;
+  --space-2:   8px;
+  --space-3:  12px;
+  --space-4:  16px;
+  --space-5:  20px;
+  --space-6:  24px;
+  --space-7:  28px;
+  --space-8:  30px;
+  --space-9:  36px;
+  --space-10: 40px;
+
+  /* ── Typography ── */
+  --font-heading:         'BellSlim', 'Arial', sans-serif;
+  --font-body:            'Satoshi', 'Arial', sans-serif;
+
+  --font-size-xs:   11px;
+  --font-size-sm:   12px;
+  --font-size-md:   13px;
+  --font-size-base: 14px;
+  --font-size-lg:   16px;
+  --font-size-xl:   18px;
+  --font-size-2xl:  22px;
+
+  --font-weight-regular:  400;
+  --font-weight-medium:   500;
+  --font-weight-bold:     700;
+  --font-weight-heavy:    900;
+
+  --line-height-tight:  1.2;
+  --line-height-base:   1.4;
+  --line-height-body:   18px;
+}

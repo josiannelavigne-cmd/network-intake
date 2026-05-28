@@ -1,0 +1,2184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Centrak 2.0 — Intake Form</title>
+<style>
+  /* ─── TOKENS ──────────────────────────────────────────────── */
+  :root {
+    --color-bg-page:               #F4F4F4;
+    --color-bg-surface:            #ffffff;
+    --color-text-primary:          #111111;
+    --color-text-secondary:        #555555;
+    --color-text-inverse:          #ffffff;
+    --color-brand-blue:            #0064bb;
+    --color-brand-blue-dark:       #003778;
+    --color-border-keyline:        #D4D4D4;
+    --color-border-light:          #e1e1e1;
+    --color-border-field:          #bdbdbd;
+    --color-stroke-primary:        rgba(17,17,17,0.16);
+    --color-tab-label-active:      #0064bb;
+    --color-tab-label-inactive:    #111111;
+    --color-link:                  #2b6ccb;
+
+    --font-family-base:            Arial, Helvetica, sans-serif;
+    --font-size-base:              16px;
+    --font-size-body-md:           14px;
+    --font-size-body-sm:           12px;
+    --font-size-body-xs:           10px;
+    --font-weight-regular:         400;
+    --font-weight-semibold:        600;
+    --line-height-base:            1.4;
+    --line-height-md:              18px;
+
+    --icon-size-xs:                12px;
+    --icon-size-sm:                16px;
+    --icon-size-default:           24px;
+
+    --spacing-4:                   4px;
+    --spacing-8:                   8px;
+    --spacing-16:                  16px;
+    --spacing-20:                  20px;
+    --spacing-24:                  24px;
+    --spacing-36:                  36px;
+
+    --tab-item-indicator-height:   1px;
+    --tab-item-padding-horizontal: 16px;
+    --tab-item-padding-top:        24px;
+    --tab-item-gap-vertical:       8px;
+
+    --nav-height:                  52px;
+    --title-row-height:            80px;   /* 24px padding + 32px row */
+    --tabs-height:                 56px;
+    --sticky-header-height:        calc(var(--nav-height) + var(--title-row-height) + var(--tabs-height));
+
+    --nav-sidebar-width:           338px;
+    --form-column-width:           538px;
+    --radius-surface:              12px;
+    --radius-field:                4px;
+    --radius-pill:                 64px;
+  }
+
+  /* ─── RESET ───────────────────────────────────────────────── */
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: var(--font-family-base);
+    font-size: var(--font-size-body-md);
+    color: var(--color-text-primary);
+    background: var(--color-bg-page);
+    line-height: var(--line-height-base);
+    min-width: 1200px;
+  }
+  a { color: var(--color-link); text-decoration: underline; }
+  a:hover { opacity: 0.8; }
+  button { cursor: pointer; border: none; background: none; font-family: inherit; }
+
+  /* ─── TOP NAV ─────────────────────────────────────────────── */
+  .topnav {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    height: var(--nav-height);
+    background: var(--color-brand-blue-dark);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 var(--spacing-24);
+    border-bottom: 1px solid rgba(255,255,255,0.12);
+  }
+  .topnav-left {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    height: 100%;
+  }
+  .topnav-logo {
+    font-size: var(--font-size-body-md);
+    font-weight: var(--font-weight-semibold);
+    color: var(--color-text-inverse);
+    white-space: nowrap;
+    letter-spacing: 0.02em;
+    padding-right: 24px;
+  }
+  .topnav-divider {
+    width: 1px;
+    height: 24px;
+    background: rgba(255,255,255,0.3);
+    margin: 0 6px;
+    flex-shrink: 0;
+  }
+  .topnav-links {
+    display: flex;
+    align-items: center;
+    height: 100%;
+    padding-left: 12px;
+    gap: 2px;
+  }
+  .topnav-link {
+    display: flex;
+    align-items: center;
+    height: var(--nav-height);
+    padding: 0 12px;
+    font-size: var(--font-size-body-sm);
+    color: rgba(255,255,255,0.75);
+    cursor: pointer;
+    white-space: nowrap;
+    border-bottom: 2px solid transparent;
+    transition: color 0.15s, border-color 0.15s;
+    text-decoration: none;
+  }
+  .topnav-link:hover {
+    color: var(--color-text-inverse);
+    border-bottom-color: rgba(255,255,255,0.4);
+  }
+  .topnav-link.active {
+    color: var(--color-text-inverse);
+    border-bottom-color: #fff;
+    font-weight: var(--font-weight-semibold);
+  }
+  .topnav-right {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-16);
+    height: 100%;
+  }
+  .topnav-badge {
+    display: flex;
+    align-items: center;
+    height: 23px;
+    padding: 0 10px;
+    border: 1px solid rgba(255,255,255,0.2);
+    border-radius: 4px;
+    font-size: 12px;
+    color: rgba(255,255,255,0.75);
+    white-space: nowrap;
+    gap: 6px;
+  }
+  .topnav-badge .dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: #4ade80;
+    flex-shrink: 0;
+  }
+  .topnav-whats-new {
+    font-size: var(--font-size-body-sm);
+    color: rgba(255,255,255,0.75);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    white-space: nowrap;
+    padding: 0 4px;
+    transition: color 0.15s;
+  }
+  .topnav-whats-new:hover { color: var(--color-text-inverse); }
+
+  /* ─── PAGE HEADER (sticky below topnav) ──────────────────── */
+  .page-header {
+    position: sticky;
+    top: var(--nav-height);
+    z-index: 90;
+    background: var(--color-bg-surface);
+    border-bottom: 1px solid var(--color-border-keyline);
+  }
+  .title-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: var(--spacing-24) var(--spacing-20) var(--spacing-16);
+  }
+  .title-left {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .page-title {
+    font-size: 20px;
+    font-weight: var(--font-weight-semibold);
+    color: var(--color-text-primary);
+    line-height: 1.2;
+  }
+  .status-badge {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    height: 32px;
+    padding: 0 var(--spacing-16);
+    border: 1px solid var(--color-border-keyline);
+    border-radius: var(--radius-field);
+    font-size: var(--font-size-body-sm);
+    color: var(--color-text-primary);
+    cursor: pointer;
+    transition: background 0.15s, border-color 0.15s;
+    background: var(--color-bg-surface);
+  }
+  .status-badge:hover { background: var(--color-bg-page); border-color: #aaa; }
+  .status-dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: #4ade80;
+    flex-shrink: 0;
+  }
+  .title-actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    height: 32px;
+    padding: 0 var(--spacing-16);
+    border-radius: var(--radius-field);
+    font-size: var(--font-size-body-sm);
+    font-weight: var(--font-weight-semibold);
+    font-family: inherit;
+    cursor: pointer;
+    transition: background 0.15s, opacity 0.15s, border-color 0.15s;
+    white-space: nowrap;
+    text-decoration: none;
+  }
+  .btn-secondary {
+    background: var(--color-bg-surface);
+    border: 1px solid var(--color-border-keyline);
+    color: var(--color-text-primary);
+  }
+  .btn-secondary:hover { background: var(--color-bg-page); border-color: #aaa; }
+  .btn-primary {
+    background: var(--color-brand-blue);
+    border: 1px solid var(--color-brand-blue);
+    color: var(--color-text-inverse);
+  }
+  .btn-primary:hover { background: #0054a0; border-color: #0054a0; }
+
+  /* ─── TABS ────────────────────────────────────────────────── */
+  .tabs-bar {
+    display: flex;
+    align-items: flex-end;
+    padding: 0 var(--spacing-20);
+    gap: 0;
+    height: var(--tabs-height);
+    border-top: 1px solid var(--color-border-light);
+  }
+  .tab-item {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    align-items: center;
+    padding: var(--tab-item-padding-top) var(--tab-item-padding-horizontal) var(--tab-item-gap-vertical);
+    min-width: var(--tab-item-min-width, 48px);
+    cursor: pointer;
+    position: relative;
+    font-size: var(--font-size-body-sm);
+    color: var(--color-tab-label-inactive);
+    white-space: nowrap;
+    transition: color 0.15s;
+    border-bottom: 2px solid transparent;
+    user-select: none;
+  }
+  .tab-item:hover { color: var(--color-tab-label-active); }
+  .tab-item.active {
+    color: var(--color-tab-label-active);
+    font-weight: var(--font-weight-semibold);
+    border-bottom-color: var(--color-tab-label-active);
+  }
+
+  /* ─── LAYOUT ──────────────────────────────────────────────── */
+  .layout {
+    display: flex;
+    align-items: flex-start;
+    padding: var(--spacing-24) var(--spacing-20);
+    gap: var(--spacing-16);
+    max-width: 1440px;
+    margin: 0 auto;
+  }
+
+  /* ─── SIDE NAV ────────────────────────────────────────────── */
+  .sidenav {
+    position: sticky;
+    top: var(--sticky-header-height);
+    width: var(--nav-sidebar-width);
+    flex-shrink: 0;
+    background: var(--color-bg-surface);
+    border-radius: var(--radius-surface);
+    border: 1px solid var(--color-border-light);
+    padding: var(--spacing-24) 0;
+    max-height: calc(100vh - var(--sticky-header-height) - var(--spacing-24));
+    overflow-y: auto;
+  }
+  .sidenav::-webkit-scrollbar { width: 4px; }
+  .sidenav::-webkit-scrollbar-thumb { background: var(--color-border-keyline); border-radius: 2px; }
+
+  .sidenav-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px var(--spacing-24);
+    font-size: var(--font-size-body-sm);
+    color: var(--color-text-secondary);
+    cursor: pointer;
+    text-decoration: none;
+    transition: background 0.12s, color 0.12s;
+    line-height: var(--line-height-md);
+    border-left: 3px solid transparent;
+    gap: 8px;
+  }
+  .sidenav-item:hover {
+    background: var(--color-bg-page);
+    color: var(--color-text-primary);
+  }
+  .sidenav-item.active {
+    color: var(--color-brand-blue);
+    font-weight: var(--font-weight-semibold);
+    border-left-color: var(--color-brand-blue);
+    background: rgba(0, 100, 187, 0.04);
+  }
+  .sidenav-item-label { flex: 1; }
+  .sidenav-chevron {
+    flex-shrink: 0;
+    width: var(--icon-size-sm);
+    height: var(--icon-size-sm);
+    opacity: 0.4;
+    transition: transform 0.2s;
+  }
+  .sidenav-item.active .sidenav-chevron { opacity: 0.8; }
+
+  /* ─── ACCORDION COLUMN ────────────────────────────────────── */
+  .accordion-col {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-16);
+  }
+
+  /* ─── ACCORDION SECTION ───────────────────────────────────── */
+  .section {
+    background: var(--color-bg-surface);
+    border-radius: var(--radius-surface);
+    border: 1px solid var(--color-border-light);
+    overflow: hidden;
+  }
+  .section-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 var(--spacing-16);
+    height: 52px;
+    cursor: pointer;
+    user-select: none;
+    border-bottom: 1px solid transparent;
+    transition: background 0.12s;
+    gap: 8px;
+  }
+  .section-header:hover { background: var(--color-bg-page); }
+  .section-header-left {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex: 1;
+    min-width: 0;
+  }
+  .section-header-chevron-left {
+    flex-shrink: 0;
+    width: var(--icon-size-sm);
+    height: var(--icon-size-sm);
+    color: var(--color-text-secondary);
+    transition: transform 0.2s;
+  }
+  .section-header-chevron-left.collapsed { transform: rotate(-90deg); }
+  .section-title {
+    font-size: var(--font-size-body-sm);
+    font-weight: var(--font-weight-semibold);
+    color: var(--color-text-primary);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .section-header-chevron {
+    flex-shrink: 0;
+    width: var(--icon-size-default);
+    height: var(--icon-size-default);
+    color: var(--color-text-secondary);
+    transition: transform 0.2s;
+  }
+  .section-header-chevron.collapsed { transform: rotate(-90deg); }
+
+  .section-body {
+    border-top: 1px solid var(--color-border-light);
+    background: var(--color-bg-surface);
+    /* height animated via JS */
+    overflow: hidden;
+    transition: height 0.25s ease;
+  }
+  .section-body.collapsed { height: 0 !important; }
+  .section-body-inner {
+    padding: var(--spacing-36);
+  }
+
+
+  /* ─── SUB-HEADING ────────────────────────────────────────── */
+  .sub-heading {
+    font-size: var(--font-size-body-sm);
+    font-weight: var(--font-weight-semibold);
+    color: var(--color-text-primary);
+    line-height: var(--line-height-md);
+    margin-bottom: 4px;
+  }
+
+  /* ─── TABLE ROWS (add/remove) ─────────────────────────────── */
+  .table-section { display: flex; flex-direction: column; gap: 8px; }
+  .table-label-row {
+    display: flex; align-items: center; gap: 16px;
+  }
+  .table-actions {
+    display: flex; gap: 18px;
+  }
+  .table-action-btn {
+    font-size: var(--font-size-body-sm);
+    color: var(--color-link);
+    text-decoration: underline;
+    cursor: pointer;
+    font-weight: var(--font-weight-semibold);
+    background: none; border: none; padding: 0; font-family: inherit;
+  }
+  .table-action-btn:hover { opacity: 0.75; }
+  .table-row { display: flex; gap: var(--spacing-16); align-items: flex-start; }
+  .table-row + .table-row { margin-top: 8px; }
+
+  /* ─── TEXTAREA WITH COUNTER ───────────────────────────────── */
+  .field-textarea-wrap { position: relative; }
+  .field-textarea-wrap .field-textarea { padding-bottom: 24px; }
+  .char-counter {
+    position: absolute; bottom: 6px; right: 10px;
+    font-size: var(--font-size-body-xs); color: var(--color-text-secondary);
+    pointer-events: none;
+  }
+
+  /* ─── HORIZONTAL SCROLL TABLE ─────────────────────────────── */
+  .scroll-table-wrap {
+    overflow-x: auto;
+    border: 1px solid var(--color-border-light);
+    border-radius: var(--radius-field);
+  }
+  .scroll-table-wrap::-webkit-scrollbar { height: 6px; }
+  .scroll-table-wrap::-webkit-scrollbar-thumb { background: var(--color-border-keyline); border-radius: 3px; }
+  .scroll-table {
+    min-width: 900px;
+    border-collapse: collapse;
+    width: 100%;
+  }
+  .scroll-table th {
+    font-size: var(--font-size-body-sm);
+    font-weight: var(--font-weight-semibold);
+    color: var(--color-text-primary);
+    text-align: left;
+    padding: 8px 10px;
+    background: var(--color-bg-page);
+    border-bottom: 1px solid var(--color-border-light);
+    white-space: nowrap;
+  }
+  .scroll-table td { padding: 4px 4px; vertical-align: middle; }
+  .scroll-table td .field-input { height: 32px; font-size: 12px; }
+  .scroll-table td .field-select { height: 32px; font-size: 12px; }
+
+  /* ─── READONLY / AUTOFILL FIELD ───────────────────────────── */
+  .field-autofill {
+    background: var(--color-bg-page);
+    border: 1px solid var(--color-border-keyline);
+    height: 36px;
+    padding: 9px 10px;
+    border-radius: var(--radius-field);
+    font-size: var(--font-size-body-md);
+    color: var(--color-text-secondary);
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  /* ─── CHEVRON SVG util ────────────────────────────────────── */
+  .chevron-svg {
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+
+  /* ─── FORM FIELDS ─────────────────────────────────────────── */
+  .form-layout {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: var(--spacing-36);
+  }
+  .field-col {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-16);
+    width: var(--form-column-width);
+    flex-shrink: 0;
+  }
+  .field-group {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+  }
+  .field-label-row {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+  .field-label {
+    font-size: var(--font-size-body-sm);
+    font-weight: var(--font-weight-semibold);
+    color: var(--color-text-primary);
+    line-height: var(--line-height-md);
+  }
+  .field-label-bold {
+    font-size: var(--font-size-body-sm);
+    font-weight: var(--font-weight-semibold);
+    color: var(--color-text-primary);
+    line-height: var(--line-height-md);
+  }
+  .info-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: var(--icon-size-sm);
+    height: var(--icon-size-sm);
+    flex-shrink: 0;
+    color: var(--color-text-secondary);
+    font-size: 11px;
+    cursor: help;
+  }
+  .field-input {
+    width: 100%;
+    height: 36px;
+    padding: 9px 10px;
+    border: 1px solid var(--color-border-field);
+    border-radius: var(--radius-field);
+    background: var(--color-bg-surface);
+    font-family: var(--font-family-base);
+    font-size: var(--font-size-body-md);
+    color: var(--color-text-primary);
+    line-height: var(--line-height-md);
+    outline: none;
+    transition: border-color 0.15s, box-shadow 0.15s;
+    box-sizing: border-box;
+  }
+  .field-input::placeholder { color: var(--color-text-secondary); }
+  .field-input:hover { border-color: #999; }
+  .field-input:focus { border-color: var(--color-brand-blue); box-shadow: 0 0 0 3px rgba(0,100,187,0.12); }
+
+  .field-input-readonly {
+    background: var(--color-bg-page);
+    border-color: var(--color-border-keyline);
+    color: var(--color-text-secondary);
+    cursor: default;
+  }
+  .field-input-readonly:hover { border-color: var(--color-border-keyline); }
+
+  .field-select {
+    width: 100%;
+    height: 36px;
+    padding: 9px 10px;
+    border: 1px solid var(--color-border-field);
+    border-radius: var(--radius-field);
+    background: var(--color-bg-surface);
+    font-family: var(--font-family-base);
+    font-size: var(--font-size-body-md);
+    color: var(--color-text-secondary);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    cursor: pointer;
+    transition: border-color 0.15s;
+    position: relative;
+    box-sizing: border-box;
+    line-height: var(--line-height-md);
+  }
+  .field-select:hover { border-color: #999; }
+  .field-select select {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    width: 100%;
+    height: 100%;
+    cursor: pointer;
+  }
+  .select-arrow {
+    font-size: 10px;
+    color: var(--color-text-secondary);
+    flex-shrink: 0;
+    pointer-events: none;
+  }
+
+  .field-date {
+    width: 184px;
+    height: 36px;
+    padding: 9px 10px;
+    border: 1px solid var(--color-border-field);
+    border-radius: var(--radius-field);
+    background: var(--color-bg-surface);
+    font-family: var(--font-family-base);
+    font-size: var(--font-size-body-md);
+    color: var(--color-text-secondary);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    cursor: pointer;
+    transition: border-color 0.15s;
+    box-sizing: border-box;
+  }
+  .field-date:hover { border-color: #999; }
+  .field-date input[type="date"] {
+    position: absolute;
+    opacity: 0;
+    width: 184px;
+    height: 36px;
+    cursor: pointer;
+  }
+  .calendar-icon {
+    font-size: var(--icon-size-sm);
+    color: var(--color-text-secondary);
+    flex-shrink: 0;
+  }
+
+  .field-textarea {
+    width: 100%;
+    min-height: 166px;
+    padding: 9px 10px;
+    border: 1px solid var(--color-border-field);
+    border-radius: var(--radius-field);
+    background: var(--color-bg-surface);
+    font-family: var(--font-family-base);
+    font-size: var(--font-size-body-md);
+    color: var(--color-text-primary);
+    line-height: var(--line-height-base);
+    resize: vertical;
+    outline: none;
+    transition: border-color 0.15s, box-shadow 0.15s;
+    box-sizing: border-box;
+  }
+  .field-textarea::placeholder { color: var(--color-text-secondary); }
+  .field-textarea:hover { border-color: #999; }
+  .field-textarea:focus { border-color: var(--color-brand-blue); box-shadow: 0 0 0 3px rgba(0,100,187,0.12); }
+
+  .field-hint {
+    font-size: var(--font-size-body-sm);
+    color: var(--color-text-secondary);
+    line-height: var(--line-height-base);
+    margin-top: 2px;
+  }
+
+  /* Radio / Selector group */
+  .field-radio-group {
+    display: flex;
+    gap: var(--spacing-16);
+    align-items: center;
+    flex-wrap: wrap;
+  }
+  .radio-option {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    font-size: var(--font-size-body-sm);
+    color: var(--color-text-secondary);
+    user-select: none;
+  }
+  .radio-option input[type="radio"] {
+    accent-color: var(--color-brand-blue);
+    width: 16px;
+    height: 16px;
+    cursor: pointer;
+    flex-shrink: 0;
+  }
+  .radio-option:hover { color: var(--color-text-primary); }
+
+  /* Inline label row with link */
+  .field-label-with-link {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+  }
+  .field-link {
+    font-size: var(--font-size-body-sm);
+    color: var(--color-link);
+    text-decoration: underline;
+    cursor: pointer;
+    white-space: nowrap;
+    font-weight: var(--font-weight-semibold);
+  }
+  .field-link:hover { opacity: 0.8; }
+
+  /* Two-col row */
+  .field-row {
+    display: flex;
+    gap: var(--spacing-16);
+    width: 100%;
+  }
+  .field-row .field-group { flex: 1; min-width: 0; }
+
+  /* Attachment field */
+  .attachment-field {
+    border: 1px dashed var(--color-border-field);
+    border-radius: var(--radius-field);
+    padding: 16px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    cursor: pointer;
+    transition: background 0.15s, border-color 0.15s;
+    background: var(--color-bg-surface);
+  }
+  .attachment-field:hover { background: var(--color-bg-page); border-color: #999; }
+  .attachment-icon {
+    width: 32px; height: 32px;
+    border-radius: var(--radius-field);
+    background: var(--color-bg-page);
+    border: 1px solid var(--color-border-light);
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+    font-size: 14px;
+  }
+  .attachment-text { font-size: var(--font-size-body-sm); color: var(--color-text-secondary); }
+  .attachment-text strong { color: var(--color-brand-blue); font-weight: var(--font-weight-semibold); }
+
+  /* Section aside (right side info/button) */
+  .section-aside {
+    padding-top: 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-16);
+    flex-shrink: 0;
+  }
+</style>
+</head>
+<body>
+
+<!-- ─── TOP NAV ────────────────────────────────────────────── -->
+<header class="topnav">
+  <div class="topnav-left">
+    <span class="topnav-logo">Centrak</span>
+    <div class="topnav-divider"></div>
+    <nav class="topnav-links">
+      <a class="topnav-link" href="#">Projects</a>
+      <a class="topnav-link active" href="#">Intake</a>
+      <a class="topnav-link" href="#">NPBC</a>
+      <a class="topnav-link" href="#">Forecasting ▾</a>
+      <a class="topnav-link" href="#">LRP ▾</a>
+      <a class="topnav-link" href="#">Admin ▾</a>
+    </nav>
+  </div>
+  <div class="topnav-right">
+    <div class="topnav-badge">
+      <span class="dot"></span>
+      Server Time&nbsp; 1:37 PM EDT
+    </div>
+    <div class="topnav-badge">
+      <span class="dot"></span>
+      Finance data synced&nbsp; Apr 13 2026&nbsp; 8:36 AM
+    </div>
+    <span class="topnav-whats-new">What's New ▾</span>
+  </div>
+</header>
+
+<!-- ─── PAGE HEADER ────────────────────────────────────────── -->
+<div class="page-header">
+  <div class="title-row">
+    <div class="title-left">
+      <h1 class="page-title">Network Modernization — Core Access Initiative</h1>
+      <button class="status-badge">
+        <span class="status-dot"></span>
+        On Track
+        <svg width="12" height="12" viewBox="0 0 12 12" fill="none" style="margin-left:2px;opacity:0.5"><path d="M2.5 4.5L6 8L9.5 4.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+    </div>
+    <div class="title-actions">
+      <button class="btn btn-secondary">Save</button>
+      <button class="btn btn-primary">Draft Approval Email</button>
+    </div>
+  </div>
+  <div class="tabs-bar">
+    <div class="tab-item active" data-tab="intake">Intake</div>
+    <div class="tab-item" data-tab="intake-analysis">Intake analysis</div>
+    <div class="tab-item" data-tab="analysis-phase">Analysis Phase</div>
+    <div class="tab-item" data-tab="dev-strategy">Development Strategy</div>
+    <div class="tab-item" data-tab="tab1">Tab</div>
+    <div class="tab-item" data-tab="tab2">Tab</div>
+  </div>
+</div>
+
+<!-- ─── MAIN LAYOUT ────────────────────────────────────────── -->
+<div class="layout">
+
+  <!-- SIDE NAV -->
+  <aside class="sidenav" id="sidenav">
+    <a class="sidenav-item active" href="#section-intake" data-section="intake">
+      <span class="sidenav-item-label">Intake</span>
+      <svg class="sidenav-chevron" viewBox="0 0 16 16" fill="none"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </a>
+    <a class="sidenav-item" href="#section-benefits-summary" data-section="benefits-summary">
+      <span class="sidenav-item-label">Benefits Summary</span>
+    </a>
+    <a class="sidenav-item" href="#section-project-prime" data-section="project-prime">
+      <span class="sidenav-item-label">Project Prime</span>
+    </a>
+    <a class="sidenav-item" href="#section-summary-hypothesis" data-section="summary-hypothesis">
+      <span class="sidenav-item-label">Summary and hypothesis statement</span>
+    </a>
+    <a class="sidenav-item" href="#section-benefits" data-section="benefits">
+      <span class="sidenav-item-label">Benefits</span>
+    </a>
+    <a class="sidenav-item" href="#section-scope" data-section="scope">
+      <span class="sidenav-item-label">Scope</span>
+    </a>
+    <a class="sidenav-item" href="#section-ranking" data-section="ranking">
+      <span class="sidenav-item-label">Ranking and Competing Priorities</span>
+    </a>
+    <a class="sidenav-item" href="#section-impact" data-section="impact">
+      <span class="sidenav-item-label">Potential impact on solutions, programs and services</span>
+    </a>
+    <a class="sidenav-item" href="#section-approvals" data-section="approvals">
+      <span class="sidenav-item-label">Corporate approvals</span>
+    </a>
+    <a class="sidenav-item" href="#section-lpm" data-section="lpm">
+      <span class="sidenav-item-label">Lean Portfolio Management (LMP)</span>
+    </a>
+    <a class="sidenav-item" href="#section-recommendation" data-section="recommendation">
+      <span class="sidenav-item-label">Record of Decision</span>
+    </a>
+    <a class="sidenav-item" href="#section-finance" data-section="finance">
+      <span class="sidenav-item-label">Finance</span>
+    </a>
+    <a class="sidenav-item" href="#section-epic" data-section="epic">
+      <span class="sidenav-item-label">Epic Description</span>
+    </a>
+    <a class="sidenav-item" href="#section-gonogo" data-section="gonogo">
+      <span class="sidenav-item-label">Go/No-Go / Approbation</span>
+    </a>
+  </aside>
+
+  <!-- ACCORDION COLUMN -->
+  <div class="accordion-col" id="accordion-col">
+
+    <!-- 1. INTAKE -->
+    <div class="section" id="section-intake" data-section-id="intake">
+      <div class="section-header" onclick="toggleSection(this)">
+        <div class="section-header-left">
+          <svg class="section-header-chevron-left" viewBox="0 0 16 16" fill="none"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <span class="section-title">Intake</span>
+        </div>
+        <svg class="section-header-chevron" viewBox="0 0 24 24" fill="none"><path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </div>
+      <div class="section-body" id="body-intake">
+        <div class="section-body-inner">
+          <div class="form-layout">
+            <div class="field-col">
+
+              <!-- Raise this request on behalf of -->
+              <div class="field-group">
+                <span class="field-label">Raise this request on behalf of</span>
+                <div class="field-select">
+                  <span>Select</span>
+                  <select><option value="">Select</option></select>
+                  <span class="select-arrow">▾</span>
+                </div>
+              </div>
+
+              <!-- PEATS Number -->
+              <div class="field-group">
+                <span class="field-label">PEATS Number</span>
+                <div class="field-textarea-wrap">
+                  <textarea class="field-textarea" maxlength="2500" id="peats-number" oninput="updateCounter(this,'peats-number-counter')"></textarea>
+                  <span class="char-counter" id="peats-number-counter">0/2500</span>
+                </div>
+              </div>
+
+              <!-- PEATS Name -->
+              <div class="field-group">
+                <span class="field-label">PEATS Name</span>
+                <div class="field-textarea-wrap">
+                  <textarea class="field-textarea" maxlength="2500" id="peats-name" oninput="updateCounter(this,'peats-name-counter')"></textarea>
+                  <span class="char-counter" id="peats-name-counter">0/2500</span>
+                </div>
+              </div>
+
+              <!-- PEATS Category -->
+              <div class="field-group">
+                <span class="field-label">PEATS Category</span>
+                <div class="field-radio-group">
+                  <label class="radio-option"><input type="radio" name="peats-category" value="strategic" /> Strategic</label>
+                  <label class="radio-option"><input type="radio" name="peats-category" value="sustain" /> Sustain</label>
+                  <label class="radio-option"><input type="radio" name="peats-category" value="demand" /> Demand</label>
+                </div>
+              </div>
+
+              <!-- Bell 8 Strategic Priorities -->
+              <div class="field-group">
+                <span class="field-label">Bell 8 Strategic Priorities</span>
+                <div class="field-select">
+                  <span>Select</span>
+                  <select><option value="">Select</option></select>
+                  <span class="select-arrow">▾</span>
+                </div>
+              </div>
+
+              <!-- Security By Design Ticket -->
+              <div class="field-group">
+                <span class="field-label">Security By Design Ticket</span>
+                <div class="field-textarea-wrap">
+                  <textarea class="field-textarea" maxlength="2500" id="security-ticket" oninput="updateCounter(this,'security-ticket-counter')"></textarea>
+                  <span class="char-counter" id="security-ticket-counter">0/2500</span>
+                </div>
+              </div>
+
+              <!-- VP Prime -->
+              <div class="field-group">
+                <span class="field-label">VP Prime</span>
+                <div class="field-select">
+                  <span>Select</span>
+                  <select><option value="">Select</option></select>
+                  <span class="select-arrow">▾</span>
+                </div>
+              </div>
+
+              <!-- Director prime -->
+              <div class="field-group">
+                <span class="field-label">Director prime</span>
+                <div class="field-select">
+                  <span>Select</span>
+                  <select><option value="">Select</option></select>
+                  <span class="select-arrow">▾</span>
+                </div>
+              </div>
+
+              <!-- Project prime -->
+              <div class="field-group">
+                <span class="field-label">Project prime</span>
+                <div class="field-select">
+                  <span>Select</span>
+                  <select><option value="">Select</option></select>
+                  <span class="select-arrow">▾</span>
+                </div>
+              </div>
+
+              <!-- Requested Live Date -->
+              <div class="field-group">
+                <span class="field-label">Requested Live Date</span>
+                <div class="field-date" style="position:relative;">
+                  <span>MM/DD/YYYY</span>
+                  <input type="date" style="position:absolute;inset:0;opacity:0;width:100%;height:100%;cursor:pointer;" />
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="color:var(--color-text-secondary);flex-shrink:0;"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="3" y1="10" x2="21" y2="10"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="16" y1="2" x2="16" y2="6"/></svg>
+                </div>
+              </div>
+
+              <!-- Impact of being delayed or cut -->
+              <div class="field-group">
+                <span class="field-label">Impact of being delayed or cut</span>
+                <div class="field-textarea-wrap">
+                  <textarea class="field-textarea" maxlength="2500" id="impact-delay" oninput="updateCounter(this,'impact-delay-counter')"></textarea>
+                  <span class="char-counter" id="impact-delay-counter">0/2500</span>
+                </div>
+                <p class="field-hint">This business impact of delay or cut will help prioritize your request. Please be clear and concise. We requires quantitive/qualitative measure and facts for our executives review these in order to prioritize accordingly.<br><br>Example: New Revenue: Numbers of subs and revenue that the business VP is committed in year and for medium/long term range.<br>Cost saving: Clear cost saving per saving that the business unit is committed to reduce per year, cost avoidance is not a preference</p>
+              </div>
+
+              <!-- Request participants -->
+              <div class="field-group">
+                <span class="field-label">Request participants</span>
+                <div class="field-select">
+                  <span>Select</span>
+                  <select><option value="">Select</option></select>
+                  <span class="select-arrow">▾</span>
+                </div>
+              </div>
+
+              <!-- File attachment -->
+              <div class="field-group">
+                <span class="field-label">File <span style="color:var(--color-text-secondary);font-weight:400;">(optional)</span></span>
+                <div class="attachment-field">
+                  <div class="attachment-text">Drag and drop files here<br><span style="color:var(--color-text-secondary);font-size:11px;">Or</span></div>
+                </div>
+                <button class="btn btn-secondary" style="width:fit-content;margin-top:6px;font-size:12px;height:32px;">Browse files</button>
+              </div>
+
+            </div><!-- /field-col -->
+
+            <!-- Aside: submit button -->
+            <div class="section-aside">
+              <button class="btn btn-primary" style="border-radius:var(--radius-pill);white-space:nowrap;">Submit for Intake / Update Intake ticket</button>
+            </div>
+
+          </div><!-- /form-layout -->
+        </div>
+      </div>
+    </div>
+
+    <!-- 2. BENEFITS SUMMARY -->
+    <div class="section" id="section-benefits-summary" data-section-id="benefits-summary">
+      <div class="section-header" onclick="toggleSection(this)">
+        <div class="section-header-left">
+          <span class="section-title">Benefits Summary</span>
+        </div>
+        <svg class="section-header-chevron collapsed" viewBox="0 0 24 24" fill="none"><path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </div>
+      <div class="section-body collapsed" id="body-benefits-summary">
+        <div class="section-body-inner">
+          <div class="field-col">
+
+            <!-- Baseline -->
+            <div class="field-group">
+              <span class="field-label">Baseline :</span>
+              <input type="text" class="field-input" />
+            </div>
+
+            <!-- Target / Revenue / Cost Saving -->
+            <div class="field-row">
+              <div class="field-group">
+                <span class="field-label">Target</span>
+                <div class="field-date" style="width:100%;position:relative;">
+                  <span>MM/DD/YYYY</span>
+                  <input type="date" style="position:absolute;inset:0;opacity:0;width:100%;height:100%;cursor:pointer;" />
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="color:var(--color-text-secondary);flex-shrink:0;"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="3" y1="10" x2="21" y2="10"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="16" y1="2" x2="16" y2="6"/></svg>
+                </div>
+              </div>
+              <div class="field-group">
+                <div class="field-label-row"><span class="field-label">Revenue</span></div>
+                <input type="text" class="field-input" />
+              </div>
+              <div class="field-group">
+                <div class="field-label-row"><span class="field-label">Cost Saving</span></div>
+                <input type="text" class="field-input" />
+              </div>
+            </div>
+
+            <!-- Customer Experience -->
+            <div class="field-group">
+              <div class="field-label-row">
+                <span class="field-label">Customer Experience</span>
+                <span class="info-icon" title="Describe the customer experience impact of this initiative.">ⓘ</span>
+              </div>
+              <input type="text" class="field-input" />
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 3. PROJECT PRIME -->
+    <div class="section" id="section-project-prime" data-section-id="project-prime">
+      <div class="section-header" onclick="toggleSection(this)">
+        <div class="section-header-left">
+          <span class="section-title">Project Prime</span>
+        </div>
+        <svg class="section-header-chevron collapsed" viewBox="0 0 24 24" fill="none"><path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </div>
+      <div class="section-body collapsed" id="body-project-prime">
+        <div class="section-body-inner">
+          <div class="field-col">
+
+            <!-- Director — auto-populated -->
+            <div class="field-group">
+              <span class="field-label">Director</span>
+              <div class="field-select">
+                <span style="color:var(--color-text-secondary);font-size:12px;">[Auto populated from intake fields]</span>
+                <select><option value="">Auto populated from intake fields</option></select>
+                <span class="select-arrow">▾</span>
+              </div>
+            </div>
+
+            <!-- Prime — auto-populated -->
+            <div class="field-group">
+              <span class="field-label">Prime</span>
+              <div class="field-select">
+                <span style="color:var(--color-text-secondary);font-size:12px;">[Auto populated from intake fields]</span>
+                <select><option value="">Auto populated from intake fields</option></select>
+                <span class="select-arrow">▾</span>
+              </div>
+            </div>
+
+            <!-- Technical Product Manager — auto-populated -->
+            <div class="field-group">
+              <span class="field-label">Technical Product Manager</span>
+              <div class="field-select">
+                <span style="color:var(--color-text-secondary);font-size:12px;">[Auto populated from intake fields]</span>
+                <select><option value="">Auto populated from intake fields</option></select>
+                <span class="select-arrow">▾</span>
+              </div>
+            </div>
+
+            <!-- Epic Owner -->
+            <div class="field-group">
+              <span class="field-label">Epic Owner</span>
+              <div class="field-select">
+                <span>Select</span>
+                <select><option value="">Select</option></select>
+                <span class="select-arrow">▾</span>
+              </div>
+            </div>
+
+            <!-- Architect -->
+            <div class="field-group">
+              <span class="field-label">Architect</span>
+              <div class="field-select">
+                <span>Select</span>
+                <select><option value="">Select</option></select>
+                <span class="select-arrow">▾</span>
+              </div>
+            </div>
+
+            <!-- Key Stakeholders -->
+            <div class="field-group">
+              <span class="field-label">Key Stakeholders</span>
+              <div class="field-select">
+                <span>Select</span>
+                <select><option value="">Select</option></select>
+                <span class="select-arrow">▾</span>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 4. SUMMARY AND HYPOTHESIS -->
+    <div class="section" id="section-summary-hypothesis" data-section-id="summary-hypothesis">
+      <div class="section-header" onclick="toggleSection(this)">
+        <div class="section-header-left">
+          <span class="section-title">Summary and hypothesis statement</span>
+        </div>
+        <svg class="section-header-chevron collapsed" viewBox="0 0 24 24" fill="none"><path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </div>
+      <div class="section-body collapsed" id="body-summary-hypothesis">
+        <div class="section-body-inner">
+          <div class="field-col">
+
+            <!-- Funnel Entry Date + Funnel Exit Date -->
+            <div class="field-row">
+              <div class="field-group">
+                <span class="field-label">Funnel Entry Date</span>
+                <div class="field-date" style="width:100%;position:relative;">
+                  <span>MM/DD/YYYY</span>
+                  <input type="date" style="position:absolute;inset:0;opacity:0;width:100%;height:100%;cursor:pointer;" />
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="color:var(--color-text-secondary);flex-shrink:0;"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="3" y1="10" x2="21" y2="10"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="16" y1="2" x2="16" y2="6"/></svg>
+                </div>
+              </div>
+              <div class="field-group">
+                <span class="field-label">Funnel Exit Date</span>
+                <div class="field-date" style="width:100%;position:relative;">
+                  <span>MM/DD/YYYY</span>
+                  <input type="date" style="position:absolute;inset:0;opacity:0;width:100%;height:100%;cursor:pointer;" />
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="color:var(--color-text-secondary);flex-shrink:0;"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="3" y1="10" x2="21" y2="10"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="16" y1="2" x2="16" y2="6"/></svg>
+                </div>
+              </div>
+            </div>
+
+            <!-- Executive Summary -->
+            <div class="field-group">
+              <span class="field-label">Executive Summary</span>
+              <div class="field-textarea-wrap">
+                <textarea class="field-textarea" maxlength="2500" id="exec-summary" oninput="updateCounter(this,'exec-summary-counter')"></textarea>
+                <span class="char-counter" id="exec-summary-counter">0/2500</span>
+              </div>
+            </div>
+
+            <!-- Hypothesis preview -->
+            <div class="field-group">
+              <p style="font-size:var(--font-size-body-sm);color:var(--color-text-secondary);line-height:1.5;padding:10px;border:1px solid var(--color-border-light);border-radius:var(--radius-field);background:var(--color-bg-page);">
+                For [who] who [unmet need], the [solution name] is a [solution category] that [key benefit]. Unlike [current alternative], our solution [differentiator].
+                <a href="#" style="margin-left:6px;font-size:12px;">Edit</a>
+              </p>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 5. BENEFITS -->
+    <div class="section" id="section-benefits" data-section-id="benefits">
+      <div class="section-header" onclick="toggleSection(this)">
+        <div class="section-header-left">
+          <span class="section-title">Benefits</span>
+        </div>
+        <svg class="section-header-chevron collapsed" viewBox="0 0 24 24" fill="none"><path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </div>
+      <div class="section-body collapsed" id="body-benefits">
+        <div class="section-body-inner">
+          <div class="field-col">
+
+            <!-- Business Outcome Hypothesis -->
+            <div class="field-group">
+              <span class="field-label">Business Outcome Hypothesis</span>
+              <div class="field-textarea-wrap">
+                <textarea class="field-textarea" maxlength="2500" id="biz-hypothesis" oninput="updateCounter(this,'biz-hypothesis-counter')"></textarea>
+                <span class="char-counter" id="biz-hypothesis-counter">0/2500</span>
+              </div>
+            </div>
+
+            <!-- Qualitative Benefits -->
+            <div class="field-group">
+              <span class="field-label">Qualitative Benefits</span>
+              <div class="field-textarea-wrap">
+                <textarea class="field-textarea" maxlength="2500" id="qual-benefits" oninput="updateCounter(this,'qual-benefits-counter')"></textarea>
+                <span class="char-counter" id="qual-benefits-counter">0/2500</span>
+              </div>
+              <p class="field-hint">Describe how the sucess will be measured: for example, Achieving a 15% increase in network throughput)</p>
+            </div>
+
+            <!-- Type of return -->
+            <div class="field-group">
+              <span class="field-label">Type of return</span>
+              <div class="field-textarea-wrap">
+                <textarea class="field-textarea" maxlength="2500" id="type-return" oninput="updateCounter(this,'type-return-counter')"></textarea>
+                <span class="char-counter" id="type-return-counter">0/2500</span>
+              </div>
+              <p class="field-hint">Market share, increased revenue, improved productivity, new markets served, etc</p>
+            </div>
+
+            <!-- Leading Indicators -->
+            <div class="field-group">
+              <span class="field-label">Leading Indicators</span>
+              <div class="field-textarea-wrap">
+                <textarea class="field-textarea" maxlength="2500" id="leading-indicators" oninput="updateCounter(this,'leading-indicators-counter')"></textarea>
+                <span class="char-counter" id="leading-indicators-counter">0/2500</span>
+              </div>
+            </div>
+
+            <!-- Non functional Requirements -->
+            <div class="field-group">
+              <span class="field-label">Non functional Requirements</span>
+              <div class="field-textarea-wrap">
+                <textarea class="field-textarea" maxlength="2500" id="non-func-req" oninput="updateCounter(this,'non-func-req-counter')"></textarea>
+                <span class="char-counter" id="non-func-req-counter">0/2500</span>
+              </div>
+            </div>
+
+            <!-- Risks -->
+            <div class="field-group">
+              <span class="field-label">Risks</span>
+              <div class="field-textarea-wrap">
+                <textarea class="field-textarea" maxlength="2500" id="benefits-risks" oninput="updateCounter(this,'benefits-risks-counter')"></textarea>
+                <span class="char-counter" id="benefits-risks-counter">0/2500</span>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 6. SCOPE -->
+    <div class="section" id="section-scope" data-section-id="scope">
+      <div class="section-header" onclick="toggleSection(this)">
+        <div class="section-header-left">
+          <span class="section-title">Scope</span>
+        </div>
+        <svg class="section-header-chevron collapsed" viewBox="0 0 24 24" fill="none"><path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </div>
+      <div class="section-body collapsed" id="body-scope">
+        <div class="section-body-inner">
+          <div class="field-col">
+
+            <!-- In Scope -->
+            <div class="field-group">
+              <span class="field-label">In Scope</span>
+              <textarea class="field-textarea"></textarea>
+              <p class="field-hint">List in point form what is in scope.</p>
+            </div>
+
+            <!-- Out of Scope -->
+            <div class="field-group">
+              <span class="field-label">Out of Scope</span>
+              <textarea class="field-textarea"></textarea>
+              <p class="field-hint">List in point form what is out of scope.</p>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 7. RANKING AND COMPETING PRIORITIES -->
+    <div class="section" id="section-ranking" data-section-id="ranking">
+      <div class="section-header" onclick="toggleSection(this)">
+        <div class="section-header-left">
+          <span class="section-title">Ranking and Competing Priorities</span>
+        </div>
+        <svg class="section-header-chevron collapsed" viewBox="0 0 24 24" fill="none"><path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </div>
+      <div class="section-body collapsed" id="body-ranking">
+        <div class="section-body-inner">
+          <div class="form-layout">
+            <div class="field-col">
+
+              <!-- Intake ranking -->
+              <div class="field-group">
+                <div class="field-label-with-link">
+                  <div class="field-label-row">
+                    <span class="field-label">Intake ranking</span>
+                    <span class="info-icon" title="Ranking based on the NPP prioritization file.">ⓘ</span>
+                  </div>
+                  <a href="#" class="field-link">NPP prioritization file</a>
+                </div>
+                <input type="text" class="field-input" />
+              </div>
+
+              <!-- Portfolio key -->
+              <div class="field-group">
+                <span class="field-label">Portfolio key</span>
+                <input type="text" class="field-input" />
+              </div>
+
+              <!-- Competing Priorities table -->
+              <div class="table-section">
+                <div class="table-label-row">
+                  <span class="field-label-bold">Competing Priorities</span>
+                  <div class="table-actions">
+                    <button class="table-action-btn" onclick="addTableRow('competing-priorities-body')">Add row</button>
+                    <button class="table-action-btn" onclick="removeTableRow('competing-priorities-body')">Remove row</button>
+                  </div>
+                </div>
+                <div class="scroll-table-wrap">
+                <table class="scroll-table" style="min-width:700px;">
+                  <thead>
+                    <tr>
+                      <th style="min-width:90px;">Portfolio key</th>
+                      <th style="min-width:140px;">Title</th>
+                      <th style="min-width:70px;">Ranking</th>
+                      <th style="min-width:70px;">PEATS</th>
+                      <th style="min-width:90px;">Teams</th>
+                      <th style="min-width:100px;">Requirements</th>
+                      <th style="min-width:100px;">Requirements</th>
+                      <th style="min-width:100px;">Requirements</th>
+                    </tr>
+                  </thead>
+                  <tbody id="competing-priorities-body">
+                    <tr>
+                      <td style="padding:4px;"><input type="text" class="field-input" style="height:32px;font-size:12px;" /></td>
+                      <td style="padding:4px;"><input type="text" class="field-input" style="height:32px;font-size:12px;" /></td>
+                      <td style="padding:4px;"><input type="text" class="field-input" style="height:32px;font-size:12px;" /></td>
+                      <td style="padding:4px;"><input type="text" class="field-input" style="height:32px;font-size:12px;" /></td>
+                      <td style="padding:4px;"><input type="text" class="field-input" style="height:32px;font-size:12px;" /></td>
+                      <td style="padding:4px;"><input type="text" class="field-input" style="height:32px;font-size:12px;" /></td>
+                      <td style="padding:4px;"><input type="text" class="field-input" style="height:32px;font-size:12px;" /></td>
+                      <td style="padding:4px;"><input type="text" class="field-input" style="height:32px;font-size:12px;" /></td>
+                    </tr>
+                    <tr>
+                      <td style="padding:4px;"><input type="text" class="field-input" style="height:32px;font-size:12px;" /></td>
+                      <td style="padding:4px;"><input type="text" class="field-input" style="height:32px;font-size:12px;" /></td>
+                      <td style="padding:4px;"><input type="text" class="field-input" style="height:32px;font-size:12px;" /></td>
+                      <td style="padding:4px;"><input type="text" class="field-input" style="height:32px;font-size:12px;" /></td>
+                      <td style="padding:4px;"><input type="text" class="field-input" style="height:32px;font-size:12px;" /></td>
+                      <td style="padding:4px;"><input type="text" class="field-input" style="height:32px;font-size:12px;" /></td>
+                      <td style="padding:4px;"><input type="text" class="field-input" style="height:32px;font-size:12px;" /></td>
+                      <td style="padding:4px;"><input type="text" class="field-input" style="height:32px;font-size:12px;" /></td>
+                    </tr>
+                  </tbody>
+                </table>
+                </div>
+              </div>
+
+              <!-- Impact on current priorities -->
+              <div class="field-group">
+                <div class="field-label-row">
+                  <span class="field-label">Impact on current priorities</span>
+                  <span class="info-icon" title="Please list the impact on Funding, Capacity, Technology, Timeline and others.">ⓘ</span>
+                </div>
+                <input type="text" class="field-input" />
+                <p class="field-hint">Please list the impact on Funding, Capacity, Technology, Timeline and others.</p>
+              </div>
+
+            </div>
+            <!-- Aside: NPP helper text -->
+            <div class="section-aside" style="width:300px;flex-shrink:0;">
+              <p style="font-size:12px;color:var(--color-text-secondary);line-height:1.6;">
+                Please fill out the ranking in <a href="#" class="field-link">inventory master file</a>. You will be able to see the final ranking in <a href="#" class="field-link">NPP - Prioritization MASTER File - NN updated - v0.3.xlsx</a>. Reach out to <a href="#" class="field-link">Albano</a>, <a href="#" class="field-link">Ana Mae</a> or <a href="#" class="field-link">Hartono</a>, <a href="#" class="field-link">Henry</a> for support for NPP ranking and governance.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 8. POTENTIAL IMPACT -->
+    <div class="section" id="section-impact" data-section-id="impact">
+      <div class="section-header" onclick="toggleSection(this)">
+        <div class="section-header-left">
+          <span class="section-title">Potential impact on solutions, programs and services</span>
+        </div>
+        <svg class="section-header-chevron collapsed" viewBox="0 0 24 24" fill="none"><path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </div>
+      <div class="section-body collapsed" id="body-impact">
+        <div class="section-body-inner">
+          <div style="display:flex;flex-direction:column;gap:12px;">
+            <div style="display:flex;gap:48px;padding:0 0 4px;">
+              <span style="font-size:12px;font-weight:600;color:var(--color-text-secondary);padding-left:100px;">Phases Timeline and Cost</span>
+              <span style="font-size:12px;font-weight:600;color:var(--color-text-secondary);">Cost Breakdown</span>
+            </div>
+            <div class="scroll-table-wrap">
+              <table class="scroll-table">
+                <thead>
+                  <tr>
+                    <th style="min-width:100px;">Teams</th>
+                    <th style="min-width:110px;">Requirements</th>
+                    <th style="min-width:80px;">Lab</th>
+                    <th style="min-width:130px;">Network readiness</th>
+                    <th style="min-width:140px;">Product Launch (MVP)</th>
+                    <th style="min-width:110px;">FTE (Labour)</th>
+                    <th style="min-width:90px;">Software</th>
+                    <th style="min-width:140px;">Professional service</th>
+                    <th style="min-width:90px;">Hardware</th>
+                    <th style="min-width:180px;">Tradeoffs (Capacity, technology)</th>
+                  </tr>
+                </thead>
+                <tbody id="impact-table-body">
+                  <tr>
+                    <td><div class="field-select" style="height:32px;font-size:12px;"><span>Select</span><select><option>Select</option></select><span class="select-arrow">▾</span></div></td>
+                    <td><input type="text" class="field-input" style="height:32px;font-size:12px;" /></td>
+                    <td><input type="text" class="field-input" style="height:32px;font-size:12px;" /></td>
+                    <td><input type="text" class="field-input" style="height:32px;font-size:12px;" /></td>
+                    <td><input type="text" class="field-input" style="height:32px;font-size:12px;" /></td>
+                    <td><input type="text" class="field-input" style="height:32px;font-size:12px;" /></td>
+                    <td><input type="text" class="field-input" style="height:32px;font-size:12px;" /></td>
+                    <td><input type="text" class="field-input" style="height:32px;font-size:12px;" /></td>
+                    <td><input type="text" class="field-input" style="height:32px;font-size:12px;" /></td>
+                    <td><input type="text" class="field-input" style="height:32px;font-size:12px;" /></td>
+                  </tr>
+                  <tr>
+                    <td><div class="field-select" style="height:32px;font-size:12px;"><span>Select</span><select><option>Select</option></select><span class="select-arrow">▾</span></div></td>
+                    <td><input type="text" class="field-input" style="height:32px;font-size:12px;" /></td>
+                    <td><input type="text" class="field-input" style="height:32px;font-size:12px;" /></td>
+                    <td><input type="text" class="field-input" style="height:32px;font-size:12px;" /></td>
+                    <td><input type="text" class="field-input" style="height:32px;font-size:12px;" /></td>
+                    <td><input type="text" class="field-input" style="height:32px;font-size:12px;" /></td>
+                    <td><input type="text" class="field-input" style="height:32px;font-size:12px;" /></td>
+                    <td><input type="text" class="field-input" style="height:32px;font-size:12px;" /></td>
+                    <td><input type="text" class="field-input" style="height:32px;font-size:12px;" /></td>
+                    <td><input type="text" class="field-input" style="height:32px;font-size:12px;" /></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <button class="btn btn-secondary" style="width:fit-content;font-size:12px;height:32px;" onclick="addTableRow('impact-table-body')">Add row</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 9. CORPORATE APPROVALS -->
+    <div class="section" id="section-approvals" data-section-id="approvals">
+      <div class="section-header" onclick="toggleSection(this)">
+        <div class="section-header-left">
+          <span class="section-title">Corporate approvals</span>
+        </div>
+        <svg class="section-header-chevron collapsed" viewBox="0 0 24 24" fill="none"><path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </div>
+      <div class="section-body collapsed" id="body-approvals">
+        <div class="section-body-inner">
+          <div class="field-col">
+
+            <!-- Intake notes -->
+            <div class="field-group">
+              <span class="field-label">Intake</span>
+              <div class="field-textarea-wrap">
+                <textarea class="field-textarea" maxlength="2500" id="approvals-intake" oninput="updateCounter(this,'approvals-intake-counter')"></textarea>
+                <span class="char-counter" id="approvals-intake-counter">0/2500</span>
+              </div>
+            </div>
+
+            <!-- Funding Approval block -->
+            <p class="sub-heading">Funding Approval</p>
+
+            <div class="field-group">
+              <span class="field-label">Funding Status</span>
+              <div class="field-radio-group">
+                <label class="radio-option"><input type="radio" name="funding-status" value="no-funding" /> No funding</label>
+                <label class="radio-option"><input type="radio" name="funding-status" value="pending" /> Pending</label>
+                <label class="radio-option"><input type="radio" name="funding-status" value="available" /> Available / Release</label>
+              </div>
+            </div>
+
+            <div class="field-group">
+              <span class="field-label">PEATS</span>
+              <div class="field-autofill">&nbsp;</div>
+            </div>
+
+            <div class="field-row">
+              <div class="field-group">
+                <span class="field-label">In Year CAPEX</span>
+                <input type="text" class="field-input" />
+              </div>
+              <div class="field-group">
+                <span class="field-label">In Year OPEX</span>
+                <input type="text" class="field-input" />
+              </div>
+            </div>
+
+            <div class="field-group">
+              <span class="field-label">Corporate Agile Funding</span>
+              <div class="field-radio-group">
+                <label class="radio-option"><input type="radio" name="corp-agile" value="yes" /> Yes</label>
+                <label class="radio-option"><input type="radio" name="corp-agile" value="no" /> No</label>
+              </div>
+            </div>
+
+            <div class="field-group">
+              <span class="field-label">Funding Category</span>
+              <div class="field-radio-group">
+                <label class="radio-option"><input type="radio" name="funding-category" value="strategic" /> Strategic</label>
+                <label class="radio-option"><input type="radio" name="funding-category" value="sustain" /> Sustain</label>
+                <label class="radio-option"><input type="radio" name="funding-category" value="demand" /> Demand</label>
+              </div>
+            </div>
+
+            <!-- Procurement Review -->
+            <div class="field-group">
+              <span class="field-label">Procurement Review:</span>
+              <div class="field-select">
+                <span>Select</span>
+                <select><option value="">Select</option></select>
+                <span class="select-arrow">▾</span>
+              </div>
+            </div>
+
+            <!-- Network Architecture Review -->
+            <div class="field-group">
+              <div class="field-label-with-link">
+                <div class="field-label-row">
+                  <span class="field-label">Network Architecture Review:</span>
+                  <span class="info-icon" title="Jira ticket for Network Architecture Review.">ⓘ</span>
+                </div>
+                <a href="#" class="field-link">Generate solution intent</a>
+              </div>
+              <input type="text" class="field-input" />
+            </div>
+
+            <!-- Security Review -->
+            <div class="field-group">
+              <span class="field-label">Security Review:</span>
+              <div class="field-textarea-wrap">
+                <textarea class="field-textarea" maxlength="2500" id="security-review-1" oninput="updateCounter(this,'security-review-1-counter')"></textarea>
+                <span class="char-counter" id="security-review-1-counter">0/2500</span>
+              </div>
+              <div class="field-textarea-wrap" style="margin-top:6px;">
+                <textarea class="field-textarea" maxlength="2500" id="security-review-2" oninput="updateCounter(this,'security-review-2-counter')"></textarea>
+                <span class="char-counter" id="security-review-2-counter">0/2500</span>
+              </div>
+            </div>
+
+            <!-- Additional notes -->
+            <div class="field-group">
+              <span class="field-label">Additional notes</span>
+              <div class="field-textarea-wrap">
+                <textarea class="field-textarea" maxlength="2500" id="approval-notes" oninput="updateCounter(this,'approval-notes-counter')"></textarea>
+                <span class="char-counter" id="approval-notes-counter">0/2500</span>
+              </div>
+            </div>
+
+            <!-- Finance Review -->
+            <div class="field-group">
+              <span class="field-label">Finance Review:</span>
+              <div class="field-textarea-wrap">
+                <textarea class="field-textarea" maxlength="2500" id="finance-review" oninput="updateCounter(this,'finance-review-counter')"></textarea>
+                <span class="char-counter" id="finance-review-counter">0/2500</span>
+              </div>
+            </div>
+
+            <!-- Controller attachment -->
+            <div class="field-group">
+              <span class="field-label">Controller <span style="color:var(--color-text-secondary);font-weight:400;">(optional)</span></span>
+              <div class="attachment-field">
+                <div class="attachment-text">Drag and drop files here<br><span style="color:var(--color-text-secondary);font-size:11px;">Or</span></div>
+              </div>
+              <button class="btn btn-secondary" style="width:fit-content;margin-top:6px;font-size:12px;height:32px;">Browse files</button>
+            </div>
+
+            <!-- Revenue recognition attachment -->
+            <div class="field-group">
+              <span class="field-label">Revenue recognition and reporting <span style="color:var(--color-text-secondary);font-weight:400;">(optional)</span></span>
+              <div class="attachment-field">
+                <div class="attachment-text">Drag and drop files here<br><span style="color:var(--color-text-secondary);font-size:11px;">Or</span></div>
+              </div>
+              <button class="btn btn-secondary" style="width:fit-content;margin-top:6px;font-size:12px;height:32px;">Browse files</button>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 10. LEAN PORTFOLIO MANAGEMENT (LMP) -->
+    <div class="section" id="section-lpm" data-section-id="lpm">
+      <div class="section-header" onclick="toggleSection(this)">
+        <div class="section-header-left">
+          <span class="section-title">Lean Portfolio Management (LMP)</span>
+        </div>
+        <svg class="section-header-chevron collapsed" viewBox="0 0 24 24" fill="none"><path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </div>
+      <div class="section-body collapsed" id="body-lpm">
+        <div class="section-body-inner">
+          <div class="field-col">
+
+            <!-- Scope -->
+            <div class="field-group">
+              <span class="field-label">Scope</span>
+              <div class="field-textarea-wrap">
+                <textarea class="field-textarea" maxlength="2500" id="lpm-scope" oninput="updateCounter(this,'lpm-scope-counter')"></textarea>
+                <span class="char-counter" id="lpm-scope-counter">0/2500</span>
+              </div>
+            </div>
+
+            <!-- Plan of Intent (POI) table -->
+            <div class="table-section">
+              <div class="table-label-row">
+                <span class="field-label-bold">Plan of Intent (POI)</span>
+                <div class="table-actions">
+                  <button class="table-action-btn" onclick="addMilestoneRow('poi-body')">Add row</button>
+                  <button class="table-action-btn" onclick="removeTableRow('poi-body')">Remove row</button>
+                </div>
+              </div>
+              <table style="width:100%;border-collapse:collapse;">
+                <thead>
+                  <tr>
+                    <th style="font-size:12px;font-weight:600;padding:4px 4px 6px;text-align:left;border-bottom:1px solid var(--color-border-light);">Milestone</th>
+                    <th style="width:185px;font-size:12px;font-weight:600;padding:4px 4px 6px;text-align:left;border-bottom:1px solid var(--color-border-light);">Target completion date</th>
+                  </tr>
+                </thead>
+                <tbody id="poi-body">
+                  <tr>
+                    <td style="padding:4px;"><input type="text" class="field-input" style="height:32px;font-size:12px;" /></td>
+                    <td style="padding:4px;"><div class="field-date" style="width:100%;height:32px;position:relative;"><span style="font-size:12px;">MM/DD/YYYY</span><input type="date" style="position:absolute;inset:0;opacity:0;cursor:pointer;" /><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="color:var(--color-text-secondary);flex-shrink:0;"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="3" y1="10" x2="21" y2="10"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="16" y1="2" x2="16" y2="6"/></svg></div></td>
+                  </tr>
+                  <tr>
+                    <td style="padding:4px;"><input type="text" class="field-input" style="height:32px;font-size:12px;" /></td>
+                    <td style="padding:4px;"><div class="field-date" style="width:100%;height:32px;position:relative;"><span style="font-size:12px;">MM/DD/YYYY</span><input type="date" style="position:absolute;inset:0;opacity:0;cursor:pointer;" /><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="color:var(--color-text-secondary);flex-shrink:0;"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="3" y1="10" x2="21" y2="10"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="16" y1="2" x2="16" y2="6"/></svg></div></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <!-- Plan of Record (POR) table -->
+            <div class="table-section">
+              <div class="table-label-row">
+                <span class="field-label-bold">Plan of Record (POR)</span>
+                <div class="table-actions">
+                  <button class="table-action-btn" onclick="addMilestoneRow('por-body')">Add row</button>
+                  <button class="table-action-btn" onclick="removeTableRow('por-body')">Remove row</button>
+                </div>
+              </div>
+              <table style="width:100%;border-collapse:collapse;">
+                <thead>
+                  <tr>
+                    <th style="font-size:12px;font-weight:600;padding:4px 4px 6px;text-align:left;border-bottom:1px solid var(--color-border-light);">Milestone</th>
+                    <th style="width:185px;font-size:12px;font-weight:600;padding:4px 4px 6px;text-align:left;border-bottom:1px solid var(--color-border-light);">Target completion date</th>
+                  </tr>
+                </thead>
+                <tbody id="por-body">
+                  <tr>
+                    <td style="padding:4px;"><input type="text" class="field-input" style="height:32px;font-size:12px;" /></td>
+                    <td style="padding:4px;"><div class="field-date" style="width:100%;height:32px;position:relative;"><span style="font-size:12px;">MM/DD/YYYY</span><input type="date" style="position:absolute;inset:0;opacity:0;cursor:pointer;" /><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="color:var(--color-text-secondary);flex-shrink:0;"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="3" y1="10" x2="21" y2="10"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="16" y1="2" x2="16" y2="6"/></svg></div></td>
+                  </tr>
+                  <tr>
+                    <td style="padding:4px;"><input type="text" class="field-input" style="height:32px;font-size:12px;" /></td>
+                    <td style="padding:4px;"><div class="field-date" style="width:100%;height:32px;position:relative;"><span style="font-size:12px;">MM/DD/YYYY</span><input type="date" style="position:absolute;inset:0;opacity:0;cursor:pointer;" /><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="color:var(--color-text-secondary);flex-shrink:0;"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="3" y1="10" x2="21" y2="10"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="16" y1="2" x2="16" y2="6"/></svg></div></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <!-- Dependencies table -->
+            <div class="table-section">
+              <div class="table-label-row">
+                <span class="field-label-bold">Dependencies</span>
+                <div class="table-actions">
+                  <button class="table-action-btn" onclick="addMilestoneRow('dependencies-body')">Add row</button>
+                  <button class="table-action-btn" onclick="removeTableRow('dependencies-body')">Remove row</button>
+                </div>
+              </div>
+              <table style="width:100%;border-collapse:collapse;">
+                <thead>
+                  <tr>
+                    <th style="min-width:140px;font-size:12px;font-weight:600;padding:4px 4px 6px;text-align:left;border-bottom:1px solid var(--color-border-light);">Dependency</th>
+                    <th style="font-size:12px;font-weight:600;padding:4px 4px 6px;text-align:left;border-bottom:1px solid var(--color-border-light);">Description</th>
+                    <th style="width:185px;font-size:12px;font-weight:600;padding:4px 4px 6px;text-align:left;border-bottom:1px solid var(--color-border-light);">Target completion date</th>
+                  </tr>
+                </thead>
+                <tbody id="dependencies-body">
+                  <tr>
+                    <td style="padding:4px;"><input type="text" class="field-input" style="height:32px;font-size:12px;" /></td>
+                    <td style="padding:4px;"><input type="text" class="field-input" style="height:32px;font-size:12px;" /></td>
+                    <td style="padding:4px;"><div class="field-date" style="width:100%;height:32px;position:relative;"><span style="font-size:12px;">MM/DD/YYYY</span><input type="date" style="position:absolute;inset:0;opacity:0;cursor:pointer;" /><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="color:var(--color-text-secondary);flex-shrink:0;"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="3" y1="10" x2="21" y2="10"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="16" y1="2" x2="16" y2="6"/></svg></div></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <!-- Cost -->
+            <div class="field-group">
+              <span class="field-label">Cost</span>
+              <div class="field-textarea-wrap">
+                <textarea class="field-textarea" maxlength="2500" id="lpm-cost" oninput="updateCounter(this,'lpm-cost-counter')"></textarea>
+                <span class="char-counter" id="lpm-cost-counter">0/2500</span>
+              </div>
+            </div>
+
+            <!-- Quality -->
+            <div class="field-group">
+              <span class="field-label">Quality</span>
+              <div class="field-textarea-wrap">
+                <textarea class="field-textarea" maxlength="2500" id="lpm-quality" oninput="updateCounter(this,'lpm-quality-counter')"></textarea>
+                <span class="char-counter" id="lpm-quality-counter">0/2500</span>
+              </div>
+            </div>
+
+            <!-- Portfolio Epic -->
+            <div class="field-group">
+              <span class="field-label">Portfolio Epic:</span>
+              <div class="field-textarea-wrap">
+                <textarea class="field-textarea" maxlength="2500" id="portfolio-epic" oninput="updateCounter(this,'portfolio-epic-counter')"></textarea>
+                <span class="char-counter" id="portfolio-epic-counter">0/2500</span>
+              </div>
+            </div>
+
+            <!-- Development strategy -->
+            <div style="display:flex;align-items:center;gap:8px;padding:4px 0;">
+              <span style="font-size:14px;font-weight:600;color:var(--color-text-primary);">Development strategy :</span>
+              <a href="#" class="field-link">Click to expand</a>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 11. RECORD OF DECISION -->
+    <div class="section" id="section-recommendation" data-section-id="recommendation">
+      <div class="section-header" onclick="toggleSection(this)">
+        <div class="section-header-left">
+          <span class="section-title">Record of Decision</span>
+        </div>
+        <svg class="section-header-chevron collapsed" viewBox="0 0 24 24" fill="none"><path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </div>
+      <div class="section-body collapsed" id="body-recommendation">
+        <div class="section-body-inner">
+          <div class="field-col">
+
+            <!-- Senior Manager Intake Review -->
+            <div class="table-section">
+              <div class="table-label-row">
+                <span class="field-label-bold">Senior Manager Intake Review</span>
+                <div class="table-actions">
+                  <button class="table-action-btn" onclick="addTableRow('sr-mgr-body')">Add row</button>
+                  <button class="table-action-btn" onclick="removeTableRow('sr-mgr-body')">Remove row</button>
+                </div>
+              </div>
+              <table style="width:100%;border-collapse:collapse;">
+                <thead>
+                  <tr>
+                    <th style="font-size:12px;font-weight:600;padding:4px 4px 6px;text-align:left;border-bottom:1px solid var(--color-border-light);">Request</th>
+                    <th style="width:175px;font-size:12px;font-weight:600;padding:4px 4px 6px;text-align:left;border-bottom:1px solid var(--color-border-light);">Approval date</th>
+                  </tr>
+                </thead>
+                <tbody id="sr-mgr-body">
+                  <tr>
+                    <td style="padding:4px;"><input type="text" class="field-input" style="height:32px;font-size:12px;" /></td>
+                    <td style="padding:4px;"><div class="field-date" style="width:100%;height:32px;position:relative;"><span style="font-size:12px;">MM/DD/YYYY</span><input type="date" style="position:absolute;inset:0;opacity:0;cursor:pointer;" /><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="color:var(--color-text-secondary);flex-shrink:0;"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="3" y1="10" x2="21" y2="10"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="16" y1="2" x2="16" y2="6"/></svg></div></td>
+                  </tr>
+                </tbody>
+              </table>
+              <div class="field-row" style="margin-top:10px;">
+                <div class="field-group">
+                  <span class="field-label">Review Resolution</span>
+                  <div class="field-textarea-wrap">
+                    <textarea class="field-textarea" maxlength="2500" id="sr-mgr-resolution" oninput="updateCounter(this,'sr-mgr-resolution-counter')"></textarea>
+                    <span class="char-counter" id="sr-mgr-resolution-counter">0/2500</span>
+                  </div>
+                </div>
+                <div class="field-group">
+                  <span class="field-label">Senior Manager Approval</span>
+                  <div class="field-select"><span>Select</span><select><option value="">Select</option><option>Approved</option><option>Rejected</option><option>Pending</option></select><span class="select-arrow">▾</span></div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Director Intake Review -->
+            <div class="table-section">
+              <div class="table-label-row">
+                <span class="field-label-bold">Director Intake Review</span>
+                <div class="table-actions">
+                  <button class="table-action-btn" onclick="addTableRow('director-body')">Add row</button>
+                  <button class="table-action-btn" onclick="removeTableRow('director-body')">Remove row</button>
+                </div>
+              </div>
+              <table style="width:100%;border-collapse:collapse;">
+                <thead>
+                  <tr>
+                    <th style="font-size:12px;font-weight:600;padding:4px 4px 6px;text-align:left;border-bottom:1px solid var(--color-border-light);">Request</th>
+                    <th style="width:175px;font-size:12px;font-weight:600;padding:4px 4px 6px;text-align:left;border-bottom:1px solid var(--color-border-light);">Approval date</th>
+                  </tr>
+                </thead>
+                <tbody id="director-body">
+                  <tr>
+                    <td style="padding:4px;"><input type="text" class="field-input" style="height:32px;font-size:12px;" /></td>
+                    <td style="padding:4px;"><div class="field-date" style="width:100%;height:32px;position:relative;"><span style="font-size:12px;">MM/DD/YYYY</span><input type="date" style="position:absolute;inset:0;opacity:0;cursor:pointer;" /><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="color:var(--color-text-secondary);flex-shrink:0;"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="3" y1="10" x2="21" y2="10"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="16" y1="2" x2="16" y2="6"/></svg></div></td>
+                  </tr>
+                </tbody>
+              </table>
+              <div class="field-row" style="margin-top:10px;">
+                <div class="field-group">
+                  <span class="field-label">Review Resolution</span>
+                  <div class="field-textarea-wrap">
+                    <textarea class="field-textarea" maxlength="2500" id="director-resolution" oninput="updateCounter(this,'director-resolution-counter')"></textarea>
+                    <span class="char-counter" id="director-resolution-counter">0/2500</span>
+                  </div>
+                </div>
+                <div class="field-group">
+                  <span class="field-label">Director Approval</span>
+                  <div class="field-select"><span>Select</span><select><option value="">Select</option><option>Approved</option><option>Rejected</option><option>Pending</option></select><span class="select-arrow">▾</span></div>
+                </div>
+              </div>
+            </div>
+
+            <!-- VP Intake Review -->
+            <div class="table-section">
+              <div class="table-label-row">
+                <span class="field-label-bold">VP Intake Review</span>
+                <div class="table-actions">
+                  <button class="table-action-btn" onclick="addTableRow('vp-body')">Add row</button>
+                  <button class="table-action-btn" onclick="removeTableRow('vp-body')">Remove row</button>
+                </div>
+              </div>
+              <table style="width:100%;border-collapse:collapse;">
+                <thead>
+                  <tr>
+                    <th style="font-size:12px;font-weight:600;padding:4px 4px 6px;text-align:left;border-bottom:1px solid var(--color-border-light);">Request</th>
+                    <th style="width:175px;font-size:12px;font-weight:600;padding:4px 4px 6px;text-align:left;border-bottom:1px solid var(--color-border-light);">Approval date</th>
+                  </tr>
+                </thead>
+                <tbody id="vp-body">
+                  <tr>
+                    <td style="padding:4px;"><input type="text" class="field-input" style="height:32px;font-size:12px;" /></td>
+                    <td style="padding:4px;"><div class="field-date" style="width:100%;height:32px;position:relative;"><span style="font-size:12px;">MM/DD/YYYY</span><input type="date" style="position:absolute;inset:0;opacity:0;cursor:pointer;" /><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="color:var(--color-text-secondary);flex-shrink:0;"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="3" y1="10" x2="21" y2="10"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="16" y1="2" x2="16" y2="6"/></svg></div></td>
+                  </tr>
+                </tbody>
+              </table>
+              <div class="field-row" style="margin-top:10px;">
+                <div class="field-group">
+                  <span class="field-label">Review Resolution</span>
+                  <div class="field-textarea-wrap">
+                    <textarea class="field-textarea" maxlength="2500" id="vp-resolution" oninput="updateCounter(this,'vp-resolution-counter')"></textarea>
+                    <span class="char-counter" id="vp-resolution-counter">0/2500</span>
+                  </div>
+                </div>
+                <div class="field-group">
+                  <span class="field-label">VP Approval</span>
+                  <div class="field-select"><span>Select</span><select><option value="">Select</option><option>Approved</option><option>Rejected</option><option>Pending</option></select><span class="select-arrow">▾</span></div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Recommendation -->
+            <div class="field-group">
+              <span class="field-label">Recommendation</span>
+              <div class="field-textarea-wrap">
+                <textarea class="field-textarea" maxlength="2500" id="recommendation" oninput="updateCounter(this,'recommendation-counter')"></textarea>
+                <span class="char-counter" id="recommendation-counter">0/2500</span>
+              </div>
+            </div>
+
+            <!-- Director Approval + Notes -->
+            <div class="field-group">
+              <span class="field-label">Director Approval</span>
+              <div class="field-select" style="width:260px;"><span>Select</span><select><option value="">Select</option><option>Approved</option><option>Rejected</option><option>Pending</option></select><span class="select-arrow">▾</span></div>
+            </div>
+            <div class="field-group">
+              <span class="field-label">Notes</span>
+              <div class="field-textarea-wrap"><textarea class="field-textarea" maxlength="2500" id="director-notes" oninput="updateCounter(this,'director-notes-counter')"></textarea><span class="char-counter" id="director-notes-counter">0/2500</span></div>
+            </div>
+
+            <!-- Network VP Approval + Notes -->
+            <div class="field-group">
+              <span class="field-label">Network VP Approval</span>
+              <div class="field-select" style="width:260px;"><span>Select</span><select><option value="">Select</option><option>Approved</option><option>Rejected</option><option>Pending</option></select><span class="select-arrow">▾</span></div>
+            </div>
+            <div class="field-group">
+              <span class="field-label">Notes</span>
+              <div class="field-textarea-wrap"><textarea class="field-textarea" maxlength="2500" id="network-vp-notes" oninput="updateCounter(this,'network-vp-notes-counter')"></textarea><span class="char-counter" id="network-vp-notes-counter">0/2500</span></div>
+            </div>
+
+            <!-- Product VP Approval + Notes -->
+            <div class="field-group">
+              <span class="field-label">Product VP Approval</span>
+              <div class="field-select" style="width:260px;"><span>Select</span><select><option value="">Select</option><option>Approved</option><option>Rejected</option><option>Pending</option></select><span class="select-arrow">▾</span></div>
+            </div>
+            <div class="field-group">
+              <span class="field-label">Notes</span>
+              <div class="field-textarea-wrap"><textarea class="field-textarea" maxlength="2500" id="product-vp-notes" oninput="updateCounter(this,'product-vp-notes-counter')"></textarea><span class="char-counter" id="product-vp-notes-counter">0/2500</span></div>
+            </div>
+
+            <!-- Finance Approval + Notes -->
+            <div class="field-group">
+              <span class="field-label">Finance Approval</span>
+              <div class="field-select" style="width:260px;"><span>Select</span><select><option value="">Select</option><option>Approved</option><option>Rejected</option><option>Pending</option></select><span class="select-arrow">▾</span></div>
+            </div>
+            <div class="field-group">
+              <span class="field-label">Notes</span>
+              <div class="field-textarea-wrap"><textarea class="field-textarea" maxlength="2500" id="finance-notes" oninput="updateCounter(this,'finance-notes-counter')"></textarea><span class="char-counter" id="finance-notes-counter">0/2500</span></div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 12. FINANCE -->
+    <div class="section" id="section-finance" data-section-id="finance">
+      <div class="section-header" onclick="toggleSection(this)">
+        <div class="section-header-left">
+          <span class="section-title">Finance</span>
+        </div>
+        <svg class="section-header-chevron collapsed" viewBox="0 0 24 24" fill="none"><path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </div>
+      <div class="section-body collapsed" id="body-finance">
+        <div class="section-body-inner">
+          <div style="display:flex;flex-direction:column;gap:16px;width:100%;">
+            <div class="attachment-field">
+              <div class="attachment-icon">📎</div>
+              <div class="attachment-text"><strong>IVA / Cashflow — Click to upload</strong> or drag and drop files here</div>
+            </div>
+            <div class="attachment-field">
+              <div class="attachment-icon">📎</div>
+              <div class="attachment-text"><strong>Ongoing cost — Click to upload</strong> or drag and drop files here</div>
+            </div>
+            <p style="font-size:12px;color:var(--color-text-secondary);line-height:1.6;">
+              Please reach out to <a href="#" class="field-link">Commisso, Vincent</a> for IVA, Cashflow and to <a href="#" class="field-link">Albano, Ana Mae</a> for ongoing cost support.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 13. EPIC DESCRIPTION -->
+    <div class="section" id="section-epic" data-section-id="epic">
+      <div class="section-header" onclick="toggleSection(this)">
+        <div class="section-header-left">
+          <span class="section-title">Epic Description</span>
+        </div>
+        <svg class="section-header-chevron collapsed" viewBox="0 0 24 24" fill="none"><path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </div>
+      <div class="section-body collapsed" id="body-epic">
+        <div class="section-body-inner">
+          <div class="field-col">
+
+            <!-- Preview -->
+            <div style="padding:10px 12px;border:1px solid var(--color-border-light);border-radius:var(--radius-field);background:var(--color-bg-page);font-size:12px;color:var(--color-text-secondary);line-height:1.6;margin-bottom:4px;">
+              For [who] who [unmet need], the [solution name] is a [solution category] that [key benefit]. Unlike [current alternative], our solution [differentiator].
+              <a href="#" style="margin-left:6px;font-size:11px;">Edit</a>
+            </div>
+
+            <div class="field-group">
+              <span class="field-label">For (specific user segment)</span>
+              <div class="field-textarea-wrap"><textarea class="field-textarea" maxlength="2500" id="epic-who" oninput="updateCounter(this,'epic-who-counter')"></textarea><span class="char-counter" id="epic-who-counter">0/2500</span></div>
+            </div>
+            <div class="field-group">
+              <span class="field-label">who (concrete pain or unmet need)</span>
+              <div class="field-textarea-wrap"><textarea class="field-textarea" maxlength="2500" id="epic-pain" oninput="updateCounter(this,'epic-pain-counter')"></textarea><span class="char-counter" id="epic-pain-counter">0/2500</span></div>
+            </div>
+            <div class="field-group">
+              <span class="field-label">the (solution name)</span>
+              <div class="field-textarea-wrap"><textarea class="field-textarea" maxlength="2500" id="epic-solution-name" oninput="updateCounter(this,'epic-solution-name-counter')"></textarea><span class="char-counter" id="epic-solution-name-counter">0/2500</span></div>
+            </div>
+            <div class="field-group">
+              <span class="field-label">is a (type of solution (tool, process, platform, integration…)</span>
+              <div class="field-textarea-wrap"><textarea class="field-textarea" maxlength="2500" id="epic-type" oninput="updateCounter(this,'epic-type-counter')"></textarea><span class="char-counter" id="epic-type-counter">0/2500</span></div>
+            </div>
+            <div class="field-group">
+              <span class="field-label">that (key benefit or capability delivered)</span>
+              <div class="field-textarea-wrap"><textarea class="field-textarea" maxlength="2500" id="epic-benefit" oninput="updateCounter(this,'epic-benefit-counter')"></textarea><span class="char-counter" id="epic-benefit-counter">0/2500</span></div>
+            </div>
+            <div class="field-group">
+              <span class="field-label">unlike (current workaround or competitor approach)</span>
+              <div class="field-textarea-wrap"><textarea class="field-textarea" maxlength="2500" id="epic-unlike" oninput="updateCounter(this,'epic-unlike-counter')"></textarea><span class="char-counter" id="epic-unlike-counter">0/2500</span></div>
+            </div>
+            <div class="field-group">
+              <span class="field-label">our solution (specific differentiator)</span>
+              <div class="field-textarea-wrap"><textarea class="field-textarea" maxlength="2500" id="epic-differentiator" oninput="updateCounter(this,'epic-differentiator-counter')"></textarea><span class="char-counter" id="epic-differentiator-counter">0/2500</span></div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 14. GO/NO-GO -->
+    <div class="section" id="section-gonogo" data-section-id="gonogo">
+      <div class="section-header" onclick="toggleSection(this)">
+        <div class="section-header-left">
+          <span class="section-title">Go/No-Go / Approbation</span>
+        </div>
+        <svg class="section-header-chevron collapsed" viewBox="0 0 24 24" fill="none"><path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </div>
+      <div class="section-body collapsed" id="body-gonogo">
+        <div class="section-body-inner">
+          <div class="field-col">
+            <div class="field-group">
+              <span class="field-label">Go, or No-Go recommendation</span>
+              <div class="field-textarea-wrap">
+                <textarea class="field-textarea" maxlength="2500" id="gonogo-recommendation" oninput="updateCounter(this,'gonogo-recommendation-counter')"></textarea>
+                <span class="char-counter" id="gonogo-recommendation-counter">0/2500</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- bottom padding -->
+    <div style="height: 40px;"></div>
+
+  </div><!-- /accordion-col -->
+</div><!-- /layout -->
+
+<script>
+  /* ─── ACCORDION TOGGLE ─────────────────────────────────── */
+  function toggleSection(headerEl) {
+    const section = headerEl.closest('.section');
+    const body = section.querySelector('.section-body');
+    const chevron = headerEl.querySelector('.section-header-chevron');
+    const chevronLeft = headerEl.querySelector('.section-header-chevron-left');
+    const isCollapsed = body.classList.contains('collapsed');
+
+    if (isCollapsed) {
+      // Expand
+      body.classList.remove('collapsed');
+      body.style.height = body.scrollHeight + 'px';
+      body.addEventListener('transitionend', () => {
+        body.style.height = 'auto';
+      }, { once: true });
+      chevron && chevron.classList.remove('collapsed');
+      chevronLeft && chevronLeft.classList.remove('collapsed');
+    } else {
+      // Collapse: set explicit height first, then animate to 0
+      body.style.height = body.scrollHeight + 'px';
+      body.offsetHeight; // force reflow
+      body.classList.add('collapsed');
+      chevron && chevron.classList.add('collapsed');
+      chevronLeft && chevronLeft.classList.add('collapsed');
+    }
+  }
+
+  /* Initialize: open first section, set heights */
+  document.querySelectorAll('.section-body:not(.collapsed)').forEach(body => {
+    body.style.height = 'auto';
+  });
+
+  /* ─── TABS ─────────────────────────────────────────────── */
+  document.querySelectorAll('.tab-item').forEach(tab => {
+    tab.addEventListener('click', () => {
+      document.querySelectorAll('.tab-item').forEach(t => t.classList.remove('active'));
+      tab.classList.add('active');
+    });
+  });
+
+  /* ─── ANCHOR NAV ────────────────────────────────────────── */
+  document.querySelectorAll('.sidenav-item').forEach(link => {
+    link.addEventListener('click', e => {
+      e.preventDefault();
+      const targetId = link.getAttribute('href').slice(1);
+      const target = document.getElementById(targetId);
+      if (!target) return;
+
+      // If section is collapsed, expand it first
+      const body = target.querySelector('.section-body');
+      if (body && body.classList.contains('collapsed')) {
+        toggleSection(target.querySelector('.section-header'));
+      }
+
+      const stickyHeight = parseInt(getComputedStyle(document.documentElement)
+        .getPropertyValue('--sticky-header-height')) || 188;
+
+      // Wait a tick for expand animation, then scroll
+      setTimeout(() => {
+        const top = target.getBoundingClientRect().top + window.scrollY - stickyHeight - 8;
+        window.scrollTo({ top, behavior: 'smooth' });
+      }, 30);
+    });
+  });
+
+  /* ─── SCROLL SPY ────────────────────────────────────────── */
+  const stickyHeaderHeight = () => {
+    const nav = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--nav-height')) || 52;
+    const ph = document.querySelector('.page-header');
+    return nav + (ph ? ph.offsetHeight : 136);
+  };
+
+  const sections = document.querySelectorAll('.section[id]');
+  const navLinks = document.querySelectorAll('.sidenav-item[data-section]');
+
+  function getActiveSection() {
+    const offset = stickyHeaderHeight() + 32;
+    let active = null;
+    sections.forEach(sec => {
+      const rect = sec.getBoundingClientRect();
+      if (rect.top <= offset) active = sec;
+    });
+    return active;
+  }
+
+  function updateScrollSpy() {
+    const active = getActiveSection();
+    if (!active) return;
+    const id = active.dataset.sectionId;
+    navLinks.forEach(link => {
+      link.classList.toggle('active', link.dataset.section === id);
+    });
+  }
+
+  window.addEventListener('scroll', updateScrollSpy, { passive: true });
+  updateScrollSpy();
+
+  /* ─── TABLE ROW HELPERS ─────────────────────────────────── */
+
+  // Clone last row of a tbody and clear its inputs
+  function addTableRow(tbodyId) {
+    const tbody = document.getElementById(tbodyId);
+    if (!tbody) return;
+    const rows = tbody.querySelectorAll('tr');
+    const template = rows[rows.length - 1].cloneNode(true);
+    template.querySelectorAll('input, textarea').forEach(el => { el.value = ''; });
+    template.querySelectorAll('select').forEach(el => { el.selectedIndex = 0; });
+    tbody.appendChild(template);
+  }
+
+  // Remove last row (keep at least one)
+  function removeTableRow(tbodyId) {
+    const tbody = document.getElementById(tbodyId);
+    if (!tbody) return;
+    const rows = tbody.querySelectorAll('tr');
+    if (rows.length > 1) tbody.removeChild(rows[rows.length - 1]);
+  }
+
+  // Clone last milestone row (description text + date picker)
+  function addMilestoneRow(tbodyId) {
+    addTableRow(tbodyId);
+  }
+
+  /* ─── TEXTAREA CHARACTER COUNTER ───────────────────────── */
+  function updateCounter(textarea, counterId) {
+    const counter = document.getElementById(counterId);
+    if (counter) counter.textContent = textarea.value.length + ' / ' + (textarea.maxLength > 0 ? textarea.maxLength : '∞');
+  }
+
+  // Initialize counters on load
+  document.querySelectorAll('textarea[maxlength][oninput]').forEach(ta => {
+    const match = ta.getAttribute('oninput').match(/updateCounter\(this,'([^']+)'\)/);
+    if (match) updateCounter(ta, match[1]);
+  });
+</script>
+</body>
+</html>

@@ -1,0 +1,714 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Network Intake — Preview</title>
+  <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <style>
+    @font-face { font-family: 'Satoshi'; src: url('./Satoshi/Satoshi-Light.otf') format('opentype'); font-weight: 300; font-style: normal; }
+    @font-face { font-family: 'Satoshi'; src: url('./Satoshi/Satoshi-LightItalic.otf') format('opentype'); font-weight: 300; font-style: italic; }
+    @font-face { font-family: 'Satoshi'; src: url('./Satoshi/Satoshi-Regular.otf') format('opentype'); font-weight: 400; font-style: normal; }
+    @font-face { font-family: 'Satoshi'; src: url('./Satoshi/Satoshi-Italic.otf') format('opentype'); font-weight: 400; font-style: italic; }
+    @font-face { font-family: 'Satoshi'; src: url('./Satoshi/Satoshi-Medium.otf') format('opentype'); font-weight: 500; font-style: normal; }
+    @font-face { font-family: 'Satoshi'; src: url('./Satoshi/Satoshi-MediumItalic.otf') format('opentype'); font-weight: 500; font-style: italic; }
+    @font-face { font-family: 'Satoshi'; src: url('./Satoshi/Satoshi-Bold.otf') format('opentype'); font-weight: 700; font-style: normal; }
+    @font-face { font-family: 'Satoshi'; src: url('./Satoshi/Satoshi-BoldItalic.otf') format('opentype'); font-weight: 700; font-style: italic; }
+    @font-face { font-family: 'Satoshi'; src: url('./Satoshi/Satoshi-Black.otf') format('opentype'); font-weight: 900; font-style: normal; }
+    @font-face { font-family: 'Satoshi'; src: url('./Satoshi/Satoshi-BlackItalic.otf') format('opentype'); font-weight: 900; font-style: italic; }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body, #root { height: 100%; }
+    body { font-family: 'Satoshi', Arial, sans-serif; background: #f9f8f6; }
+    button { cursor: pointer; background: none; border: none; font-family: inherit; }
+    a { text-decoration: none; color: inherit; }
+    ul, li { list-style: none; }
+
+    /* ── Page ── */
+    .page { display: flex; flex-direction: column; height: 100vh; overflow: hidden; }
+
+    /* ── Top nav ── */
+    .top-nav { height: 52px; background: #00549a; display: flex; align-items: center; padding: 0 24px; gap: 28px; flex-shrink: 0; }
+    .top-nav__logo { font-family: 'BellSlim', Arial, sans-serif; font-weight: 900; font-size: 18px; color: #fff; }
+    .top-nav__divider { width: 1px; height: 24px; background: rgba(255,255,255,0.3); flex-shrink: 0; }
+    .top-nav__links { display: flex; gap: 28px; flex: 1; }
+    .top-nav__links a { font-size: 13px; font-weight: 500; color: rgba(255,255,255,0.9); }
+    .top-nav__right { display: flex; align-items: center; gap: 16px; }
+    .top-nav__meta { font-size: 11px; color: rgba(255,255,255,0.7); white-space: nowrap; }
+    .top-nav__new { font-size: 12px; color: #fff; }
+
+    /* ── Title row ── */
+    .title-row { height: 92px; background: #F7F5F2; border-bottom: 1px solid #d9d9d9; display: flex; align-items: center; justify-content: space-between; padding: 0 30px; flex-shrink: 0; }
+    .title-row__title { font-family: 'BellSlim', Arial, sans-serif; font-weight: 900; font-size: 22px; color: #1b2332; }
+    .title-row__actions { display: flex; align-items: center; gap: 10px; }
+    .btn { height: 34px; padding: 0 16px; border-radius: 64px; font-family: 'Inter', Arial, sans-serif; font-size: 13px; font-weight: 500; display: flex; align-items: center; white-space: nowrap; }
+    .btn--outline { border: 1px solid #bdbdbd; color: #2b6ccb; background: #fff; }
+    .btn--outline:hover { background: #f4f5f7; }
+    .btn--secondary { border: 1px solid #0064BB; color: #0064BB; background: #F7F5F2; }
+    .btn--secondary:hover { background: rgba(0, 100, 187, 0.08); }
+    .btn--solid { background: #0064bb; color: #fff; border: none; }
+    .btn--solid:hover { background: #003778; }
+
+    /* ── Body ── */
+    .body { display: flex; flex: 1; overflow: hidden; }
+
+    /* ── Left panel ── */
+    /* ── Left panel ── */
+    .left-panel {
+      flex-shrink: 0;
+      background: #f9f8f6;
+      border-right: 1px solid #d9d9d9;
+      display: flex;
+      flex-direction: row;
+      overflow: hidden;
+      width: 358px;
+      transition: width 0.25s ease;
+      position: relative;
+    }
+    .left-panel--collapsed { width: 40px; }
+    .left-panel--collapsed .left-panel__inner { opacity: 0; pointer-events: none; }
+
+    .left-panel__inner {
+      flex: 1;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      opacity: 1;
+      transition: opacity 0.15s ease;
+      min-width: 0;
+    }
+
+    .status-bar { display: flex; align-items: center; gap: 20px; padding: 20px 20px 0; }
+    .status-pill { flex: 1; display: flex; align-items: center; gap: 10px; background: #d3e3ed; border-radius: 64px; padding: 8px 16px; font-family: 'Inter', Arial, sans-serif; font-size: 13px; font-weight: 500; color: #1b2332; cursor: pointer; }
+
+    /* Toggle — pinned to the right edge of the panel */
+    .panel-toggle {
+      width: 40px;
+      flex-shrink: 0;
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
+      padding-top: 18px;
+    }
+    .panel-toggle__btn {
+      width: 28px;
+      height: 28px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #555;
+      border-radius: 4px;
+      flex-shrink: 0;
+    }
+    .panel-toggle__btn:hover { background: #e0e0e0; color: #111; }
+    .panel-toggle__icon { transition: transform 0.25s ease; }
+    .panel-toggle__icon--flipped { transform: rotate(180deg); }
+    .nav-cards { margin-top: 20px; }
+    .nav-card { border-top: 1px solid #d9d9d9; border-bottom: 1px solid #d9d9d9; }
+    .nav-card + .nav-card { border-top: none; }
+    .nav-card__hd { display: flex; align-items: flex-start; justify-content: space-between; padding: 20px; gap: 8px; width: 100%; text-align: left; }
+    .nav-card__hd:hover { background: rgba(0, 100, 187, 0.08); }
+    .nav-card__title { font-size: 16px; font-weight: 700; line-height: 22.4px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .nav-card__title--active { color: #0064bb; }
+    .nav-card__title--inactive { color: #111; }
+    .progress-wrap { display: flex; flex-direction: column; gap: 3px; width: 100%; margin-top: 4px; }
+    .progress-track { height: 6px; background: #d9d9d9; border-radius: 3px; overflow: hidden; }
+    .progress-fill { height: 100%; background: #2b6ccb; border-radius: 3px; }
+    .progress-label { font-size: 12px; font-weight: 500; color: rgba(17,17,17,0.6); line-height: 18px; }
+    .nav-items { display: flex; flex-direction: column; padding: 0 20px 20px; }
+    .nav-item { display: flex; align-items: center; justify-content: space-between; padding: 10px 0; width: 100%; text-align: left; gap: 8px; }
+    .nav-item__label { font-size: 14px; font-weight: 500; flex: 1; min-width: 0; }
+    .nav-item__label--active { color: #2b6ccb; }
+    .nav-item__label--inactive { color: #1b2332; }
+    .nav-item:hover .nav-item__label { color: #0064BB; }
+    .nav-item__circle { width: 13.33px; height: 13.33px; border-radius: 50%; border: 1.5px solid #d9d9d9; flex-shrink: 0; }
+    .chevron { flex-shrink: 0; transition: transform 0.2s; color: #aaa; }
+    .chevron--up { transform: rotate(180deg); }
+
+    /* ── Content area ── */
+    .content-area { flex: 1; background: #f9f8f6; overflow-y: auto; padding: 24px 40px 40px; }
+    .sections { display: flex; flex-direction: column; gap: 8px; }
+
+    /* ── Accordion ── */
+    .accordion { border-radius: 12px; overflow: hidden; }
+    .accordion__hd {
+      background: #fff;
+      border: 1px solid #d9d9d9;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      padding: 14px 16px;
+      gap: 16px;
+      width: 100%;
+      text-align: left;
+      transition: border-radius 0.2s;
+    }
+    .accordion__hd--open {
+      border-bottom-left-radius: 0;
+      border-bottom-right-radius: 0;
+      border-bottom-color: transparent;
+    }
+    .accordion__hd:hover { background: #fafafa; }
+    .accordion__hd-left { display: flex; align-items: center; gap: 16px; flex: 1; min-width: 0; }
+    .accordion__label { font-size: 14px; font-weight: 700; color: #2b6ccb; flex: 1; }
+    .accordion__circle { width: 13.33px; height: 13.33px; border-radius: 50%; border: 1.5px solid #d9d9d9; flex-shrink: 0; }
+    .accordion__body {
+      background: #fff;
+      border: 1px solid #d9d9d9;
+      border-top: none;
+      border-bottom-left-radius: 12px;
+      border-bottom-right-radius: 12px;
+      padding: 36px;
+    }
+
+    /* ── Form fields ── */
+    .fields { display: flex; flex-direction: column; gap: 16px; max-width: 538px; }
+    .field { display: flex; flex-direction: column; gap: 5px; }
+    .field__label {
+      font-family: 'Satoshi', Arial, sans-serif;
+      font-size: 12px;
+      font-weight: 500;
+      color: #111;
+      line-height: 18px;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+    .field__label-link { color: #2b6ccb; font-size: 12px; margin-left: 8px; }
+    .field__input, .field__select, .field__textarea {
+      background: #fff;
+      border: 1px solid #bdbdbd;
+      border-radius: 4px;
+      padding: 9px 10px;
+      font-family: 'Arial', sans-serif;
+      font-size: 14px;
+      color: #555;
+      line-height: 18px;
+      width: 100%;
+      outline: none;
+    }
+    .field__input:focus, .field__select:focus, .field__textarea:focus { border-color: #0064bb; }
+    .field__select { appearance: none; background-image: url("data:image/svg+xml,%3Csvg width='10' height='6' viewBox='0 0 10 6' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%23555' stroke-width='1.2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 10px center; padding-right: 28px; cursor: pointer; }
+    .field__textarea { resize: vertical; min-height: 100px; font-family: 'Arial', sans-serif; font-size: 14px; }
+    .field__textarea--tall { min-height: 166px; }
+    .field__row { display: flex; gap: 16px; }
+    .field__row .field { flex: 1; }
+    .field__row .field--narrow { flex: 0 0 160px; }
+
+    /* Hypothesis template text */
+    .hypothesis-template { font-size: 12px; color: #555; line-height: 1.5; font-style: italic; margin-top: 2px; }
+
+    /* Section submit button */
+    .section-submit { margin-top: 24px; }
+
+    /* ── Info icon ── */
+    .info-icon { width: 14px; height: 14px; border-radius: 50%; background: #0064bb; color: #fff; font-size: 9px; font-weight: 700; display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; font-family: 'Inter', Arial, sans-serif; }
+
+    /* ── Table fields ── */
+    .table-field { width: 100%; border-collapse: collapse; font-size: 12px; }
+    .table-field th { font-family: 'Satoshi', Arial, sans-serif; font-weight: 500; color: #111; padding: 0 0 6px 0; text-align: left; font-size: 12px; }
+    .table-field td { padding: 4px 4px 4px 0; vertical-align: top; }
+    .table-field td:last-child { padding-right: 0; }
+    .table-row-actions { display: flex; gap: 16px; margin-top: 8px; }
+    .table-row-actions button { font-size: 12px; color: #2b6ccb; font-weight: 500; font-family: 'Satoshi', Arial, sans-serif; }
+
+    /* ── Selector chips ── */
+    .chip-group { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 4px; }
+    .chip { padding: 4px 12px; border: 1px solid #bdbdbd; border-radius: 64px; font-size: 12px; color: #555; cursor: pointer; font-family: 'Satoshi', Arial, sans-serif; font-weight: 500; }
+    .chip:hover { border-color: #0064bb; color: #0064bb; }
+    .chip--active { background: #0064bb; color: #fff; border-color: #0064bb; }
+
+    /* ── Check-fill SVG ── */
+    .check-fill { width: 16px; height: 16px; flex-shrink: 0; }
+  </style>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel">
+const { useState } = React;
+
+/* ── Icons ── */
+function ChevronIcon({ up }) {
+  return (
+    <svg className={`chevron ${up ? 'chevron--up' : ''}`} width="24" height="24" viewBox="0 0 24 24" fill="none">
+      <path d="M6 9l6 6 6-6" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+    </svg>
+  );
+}
+function CheckFill() {
+  return (
+    <svg className="check-fill" viewBox="0 0 16 16" fill="none">
+      <circle cx="8" cy="8" r="8" fill="#0064bb"/>
+      <path d="M4.5 8.5l2.5 2.5 4.5-5" stroke="#fff" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+    </svg>
+  );
+}
+function InfoIcon() { return <span className="info-icon">i</span>; }
+
+/* ── Form primitives ── */
+function Field({ label, info, placeholder = '', type = 'text', narrow }) {
+  return (
+    <div className={`field${narrow ? ' field--narrow' : ''}`}>
+      <label className="field__label">{label}{info && <InfoIcon/>}</label>
+      <input className="field__input" type={type} placeholder={placeholder || ' '} />
+    </div>
+  );
+}
+function SelectField({ label, info, placeholder = 'Select', autoPopulated }) {
+  return (
+    <div className="field">
+      <label className="field__label">{label}{info && <InfoIcon/>}</label>
+      <select className="field__select" defaultValue="">
+        <option value="" disabled>{autoPopulated ? '[Auto populated from intake fields]' : placeholder}</option>
+      </select>
+    </div>
+  );
+}
+function DateField({ label }) {
+  return (
+    <div className="field field--narrow">
+      <label className="field__label">{label}</label>
+      <input className="field__input" type="text" placeholder="MM/DD/YYYY" />
+    </div>
+  );
+}
+function TextareaField({ label, info, hint, tall }) {
+  return (
+    <div className="field" style={{ maxWidth: 538 }}>
+      <label className="field__label">{label}{info && <InfoIcon/>}</label>
+      {hint && <p className="hypothesis-template">{hint}</p>}
+      <textarea className={`field__textarea${tall ? ' field__textarea--tall' : ''}`} />
+    </div>
+  );
+}
+function ChipField({ label, options }) {
+  const [active, setActive] = useState(null);
+  return (
+    <div className="field">
+      <label className="field__label">{label}</label>
+      <div className="chip-group">
+        {options.map(o => (
+          <button key={o} className={`chip${active === o ? ' chip--active' : ''}`} onClick={() => setActive(o)}>{o}</button>
+        ))}
+      </div>
+    </div>
+  );
+}
+function TableField({ label, columns, rows = 2 }) {
+  return (
+    <div className="field" style={{ maxWidth: '100%' }}>
+      <label className="field__label" style={{ marginBottom: 6 }}>
+        {label}
+        <span className="table-row-actions" style={{ display: 'inline-flex', marginLeft: 16 }}>
+          <button>Add row</button>
+          <button>Remove row</button>
+        </span>
+      </label>
+      <table className="table-field">
+        <thead>
+          <tr>{columns.map(c => <th key={c}>{c}</th>)}</tr>
+        </thead>
+        <tbody>
+          {Array.from({ length: rows }).map((_, i) => (
+            <tr key={i}>
+              {columns.map(c => (
+                <td key={c}><input className="field__input" style={{ minWidth: 60 }} /></td>
+              ))}
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  );
+}
+
+/* ── Accordion section ── */
+function Accordion({ title, done, open, onToggle, children }) {
+  return (
+    <div className="accordion">
+      <button className={`accordion__hd${open ? ' accordion__hd--open' : ''}`} onClick={onToggle}>
+        <div className="accordion__hd-left">
+          {done ? <CheckFill /> : <span className="accordion__circle" />}
+          <span className="accordion__label">{title}</span>
+        </div>
+        <ChevronIcon up={open} />
+      </button>
+      {open && <div className="accordion__body">{children}</div>}
+    </div>
+  );
+}
+
+/* ══════════════════════════════════════════
+   SECTIONS
+══════════════════════════════════════════ */
+
+function Section1() {
+  return (
+    <div className="fields">
+      <div className="field__row">
+        <Field label="PEATS Number" info narrow />
+        <Field label="PEATS Name" info />
+      </div>
+      <Field label="Security By Design Ticket" info />
+      <SelectField label="VP Prime" />
+      <SelectField label="Director prime" />
+      <SelectField label="Project prime" />
+      <DateField label="Requested Live Date" />
+      <div className="section-submit">
+        <button className="btn btn--solid">Submit for Intake / Update Intake ticket</button>
+      </div>
+    </div>
+  );
+}
+
+function Section2() {
+  return (
+    <div className="fields">
+      <SelectField label="Director" autoPopulated />
+      <SelectField label="Prime" autoPopulated />
+      <SelectField label="Technical Product Manager" autoPopulated />
+      <SelectField label="Epic Owner" />
+      <SelectField label="Architect" />
+      <SelectField label="Key Stakeholders" />
+    </div>
+  );
+}
+
+function Section3() {
+  return (
+    <div className="fields">
+      <TextareaField
+        label="Problem statement / Opportunity"
+        info
+        tall
+      />
+      <div className="field" style={{ maxWidth: 538 }}>
+        <label className="field__label">Hypothesis statement</label>
+        <p className="hypothesis-template">
+          For [who] who [unmet need], the [solution name] is a [solution category] that [key benefit].
+          Unlike [current alternative], our solution [differentiator].
+        </p>
+        <textarea className="field__textarea" style={{ marginTop: 8 }} />
+      </div>
+      <Field label="Solution name" />
+      <SelectField label="Solution category" />
+      <SelectField label="Business unit" />
+      <SelectField label="Product line" />
+      <SelectField label="Portfolio" />
+      <SelectField label="Program" />
+      <SelectField label="Strategic pillar" />
+    </div>
+  );
+}
+
+function Section4() {
+  return (
+    <div className="fields">
+      <TextareaField label="Business value / Customer benefit" info tall />
+      <TextareaField label="Success metrics" hint="Describe how success will be measured (e.g. achieving a 15% increase in network throughput)" tall />
+      <TextareaField label="Revenue impact" tall />
+      <TextareaField label="Cost saving" tall />
+      <TextareaField label="Risk of inaction" tall />
+    </div>
+  );
+}
+
+function Section5() {
+  return (
+    <div className="fields">
+      <TextareaField label="In scope" hint="List in point form what is in scope" tall />
+      <TextareaField label="Out of scope" hint="List in point form what is out of scope" tall />
+    </div>
+  );
+}
+
+function Section6() {
+  return (
+    <div className="fields" style={{ maxWidth: '100%' }}>
+      <div className="field__row" style={{ maxWidth: 538 }}>
+        <Field label="NPP score" info narrow />
+        <Field label="NPP rank" narrow />
+      </div>
+      <TableField
+        label="Competing priorities"
+        columns={['Rank', 'Initiative / Project', 'Score', 'Weighted']}
+      />
+      <TextareaField
+        label="Business impact of delay or cut"
+        info
+        hint="Please list the impact on Funding, Capacity, Technology, Timeline and others"
+        tall
+      />
+    </div>
+  );
+}
+
+function Section7() {
+  return (
+    <div className="fields" style={{ maxWidth: '100%' }}>
+      <div style={{ overflowX: 'auto' }}>
+        <table className="table-field" style={{ minWidth: 900 }}>
+          <thead>
+            <tr>
+              <th style={{ minWidth: 130 }}>Phase</th>
+              <th style={{ minWidth: 130 }}>Start date</th>
+              <th style={{ minWidth: 130 }}>End date</th>
+              <th style={{ minWidth: 130 }}>FTE (NW)</th>
+              <th style={{ minWidth: 130 }}>FTE (IT)</th>
+              <th style={{ minWidth: 130 }}>Capex</th>
+              <th style={{ minWidth: 130 }}>Opex</th>
+              <th style={{ minWidth: 130 }}>Vendor</th>
+              <th style={{ minWidth: 130 }}>Total</th>
+            </tr>
+          </thead>
+          <tbody>
+            {[0, 1].map(i => (
+              <tr key={i}>
+                {Array(9).fill(null).map((_, j) => (
+                  <td key={j}><input className="field__input" /></td>
+                ))}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      <div className="table-row-actions">
+        <button>Add row</button>
+      </div>
+    </div>
+  );
+}
+
+function Section8() {
+  return (
+    <div className="fields">
+      <ChipField label="Funding approval" options={['Approved', 'Conditional', 'Not approved']} />
+      <div className="field__row">
+        <Field label="Approved budget ($)" narrow />
+        <Field label="Fiscal year" narrow />
+        <Field label="Phase" narrow />
+      </div>
+      <ChipField label="Priority" options={['High', 'Medium', 'Low']} />
+      <ChipField label="Stage gate" options={['Ideation', 'Analysis', 'Development', 'Delivery']} />
+      <div className="field" style={{ maxWidth: 538 }}>
+        <label className="field__label">
+          Solution intent
+          <InfoIcon/>
+          <a href="#" className="field__label-link">Generate solution intent</a>
+        </label>
+        <input className="field__input" placeholder=" " />
+      </div>
+      <TextareaField label="Solution intent details" tall />
+    </div>
+  );
+}
+
+function Section9() {
+  return (
+    <div className="fields" style={{ maxWidth: '100%' }}>
+      <TableField
+        label="Epics"
+        columns={['Epic name', 'Target PI']}
+      />
+      <TableField
+        label="Milestones"
+        columns={['Milestone name', 'Target date']}
+      />
+      <TableField
+        label="Initiatives"
+        columns={['Initiative name', 'Target date']}
+      />
+    </div>
+  );
+}
+
+function ApprovalBlock({ role }) {
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 16, maxWidth: 538, marginBottom: 32 }}>
+      <div className="field__row">
+        <Field label={`${role} name`} />
+        <DateField label="Date" />
+      </div>
+      <TextareaField label="Notes" tall />
+      <Field label="Decision" placeholder=" " />
+    </div>
+  );
+}
+
+function Section10() {
+  return (
+    <div>
+      <p className="field__label" style={{ marginBottom: 16 }}>Senior Manager review</p>
+      <ApprovalBlock role="Senior Manager" />
+      <p className="field__label" style={{ marginBottom: 16 }}>Director review</p>
+      <ApprovalBlock role="Director" />
+      <p className="field__label" style={{ marginBottom: 16 }}>VP review</p>
+      <ApprovalBlock role="VP" />
+    </div>
+  );
+}
+
+const SECTIONS = [
+  { id: 1,  title: '1 - Intake',                                          done: true,  defaultOpen: true,  content: <Section1 /> },
+  { id: 2,  title: '2 - Project Prime',                                    done: false, defaultOpen: false, content: <Section2 /> },
+  { id: 3,  title: '3 - Summary and hypothesis statement',                 done: false, defaultOpen: false, content: <Section3 /> },
+  { id: 4,  title: '4 - Benefits',                                         done: false, defaultOpen: false, content: <Section4 /> },
+  { id: 5,  title: '5 - Scope',                                            done: false, defaultOpen: false, content: <Section5 /> },
+  { id: 6,  title: '6 - Ranking and Competing Priorities',                 done: false, defaultOpen: false, content: <Section6 /> },
+  { id: 7,  title: '7 - Potential impact on solutions, programs and services', done: false, defaultOpen: false, content: <Section7 /> },
+  { id: 8,  title: '8 - Corporate approvals',                              done: false, defaultOpen: false, content: <Section8 /> },
+  { id: 9,  title: '9 - Lean Portfolio Management (LPM)',                  done: false, defaultOpen: false, content: <Section9 /> },
+  { id: 10, title: '10 - Record of Decision',                              done: false, defaultOpen: false, content: <Section10 /> },
+];
+
+const NAV_ITEMS = SECTIONS.map(s => ({ id: s.id, label: s.title, done: s.done }));
+
+/* ── Left panel components ── */
+function NavCard({ title, active, items, activeId, onItemClick }) {
+  const [expanded, setExpanded] = useState(active);
+  return (
+    <div className="nav-card">
+      <button className="nav-card__hd" onClick={() => setExpanded(e => !e)}>
+        <div style={{ flex: 1, minWidth: 0 }}>
+          <span className={`nav-card__title ${active ? 'nav-card__title--active' : 'nav-card__title--inactive'}`}>
+            {title}
+          </span>
+          {active && expanded && (
+            <div className="progress-wrap">
+              <div className="progress-track"><div className="progress-fill" style={{ width: '12%' }} /></div>
+              <span className="progress-label">Completion - 12 %</span>
+            </div>
+          )}
+        </div>
+        <ChevronIcon up={!expanded} />
+      </button>
+      {expanded && items.length > 0 && (
+        <ul className="nav-items">
+          {items.map(item => (
+            <li key={item.id}>
+              <button className="nav-item" onClick={() => onItemClick(item.id)}>
+                <span className={`nav-item__label ${item.id === activeId ? 'nav-item__label--active' : 'nav-item__label--inactive'}`}>
+                  {item.label}
+                </span>
+                {item.done ? <CheckFill /> : <span className="nav-item__circle" />}
+              </button>
+            </li>
+          ))}
+        </ul>
+      )}
+    </div>
+  );
+}
+
+/* ── App ── */
+function App() {
+  const [activeId, setActiveId] = useState(1);
+  const [openSections, setOpenSections] = useState(new Set([1]));
+  const [panelCollapsed, setPanelCollapsed] = useState(false);
+
+  const toggleSection = (id) => {
+    setOpenSections(prev => {
+      const next = new Set(prev);
+      next.has(id) ? next.delete(id) : next.add(id);
+      return next;
+    });
+  };
+
+  const scrollToSection = (id) => {
+    setActiveId(id);
+    // Force open if collapsed, then scroll
+    setOpenSections(prev => new Set([...prev, id]));
+    setTimeout(() => {
+      const el = document.getElementById(`section-${id}`);
+      if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, 50);
+  };
+
+  return (
+    <div className="page">
+      {/* Top nav */}
+      <header className="top-nav">
+        <span className="top-nav__logo">CenTrak</span>
+        <div className="top-nav__divider" />
+        <nav className="top-nav__links">
+          <a href="#">Projects</a>
+          <a href="#">Forecasting ▾</a>
+          <a href="#">LRP ▾</a>
+          <a href="#">Admin ▾</a>
+        </nav>
+        <div className="top-nav__right">
+          <span className="top-nav__meta">Server Time  1:37 PM EDT</span>
+          <span className="top-nav__meta">Finance data synced  Apr 13 2026  8:36 AM</span>
+          <span className="top-nav__new">What's New</span>
+        </div>
+      </header>
+
+      {/* Title row */}
+      <div className="title-row">
+        <h1 className="title-row__title">PEATS 12345 — [Name of the project]</h1>
+        <div className="title-row__actions">
+          <button className="btn btn--secondary">Draft Approval Email</button>
+          <button className="btn btn--solid">Request intake review</button>
+          <button className="btn btn--solid">Save</button>
+        </div>
+      </div>
+
+      <div className="body">
+        {/* Left panel */}
+        <aside className={`left-panel${panelCollapsed ? ' left-panel--collapsed' : ''}`}>
+          {/* Panel content */}
+          <div className="left-panel__inner">
+            <div className="status-bar">
+              <div className="status-pill">
+                <span>On Track</span>
+                <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+                  <path d="M2 4l4 4 4-4" stroke="#1b2332" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+              </div>
+            </div>
+            <div className="nav-cards">
+              <NavCard title="Section 1 - Intake analysis" active={true} items={NAV_ITEMS} activeId={activeId} onItemClick={scrollToSection} />
+              <NavCard title="Section 2 - Analysis Phase" active={false} items={[]} activeId={activeId} onItemClick={scrollToSection} />
+              <NavCard title="Section 3 - Development Strategy" active={false} items={[]} activeId={activeId} onItemClick={scrollToSection} />
+            </div>
+          </div>
+
+          {/* Toggle — always visible on right edge */}
+          <div className="panel-toggle">
+            <button className="panel-toggle__btn" onClick={() => setPanelCollapsed(c => !c)} title={panelCollapsed ? 'Expand panel' : 'Collapse panel'}>
+              <svg className={`panel-toggle__icon${panelCollapsed ? ' panel-toggle__icon--flipped' : ''}`} width="16" height="16" viewBox="0 0 16 16" fill="none">
+                <path d="M10 3L5 8l5 5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                <path d="M14 3L9 8l5 5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
+            </button>
+          </div>
+        </aside>
+
+        {/* Content */}
+        <main className="content-area">
+          <div className="sections">
+            {SECTIONS.map(s => (
+              <div key={s.id} id={`section-${s.id}`}>
+                <Accordion
+                  title={s.title}
+                  done={s.done}
+                  open={openSections.has(s.id)}
+                  onToggle={() => toggleSection(s.id)}
+                >
+                  {s.content}
+                </Accordion>
+              </div>
+            ))}
+          </div>
+        </main>
+      </div>
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+</script>
+</body>
+</html>
