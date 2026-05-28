@@ -1,6 +1,6 @@
 # Deployment Notes for Agent
 
-This repository is currently a static prototype: plain HTML/CSS/assets with browser-loaded React/Babel in `intake-preview.html`. The current deployment workflow intentionally does not change the prototype code.
+This repository is currently a static prototype: plain HTML/CSS/assets with browser-loaded React/Babel in `intake-preview.html`.
 
 ## Current GitHub Actions Setup
 
